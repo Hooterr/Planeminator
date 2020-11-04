@@ -6,4 +6,8 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Planeminator.Domain\Planeminator.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
