@@ -13,7 +13,7 @@ namespace Planeminator.Domain.Functions
         /// Calculates number of liters of fuel burned per kilometer
         /// </summary>
         /// <param name="loadKg">Mass of payload in kg</param>
-        /// <returns>Mailage in liters per kilometer</returns>
+        /// <returns>Mileage in liters per kilometer</returns>
         double CalculateMailage(double payloadMassKg);
     }
 }
