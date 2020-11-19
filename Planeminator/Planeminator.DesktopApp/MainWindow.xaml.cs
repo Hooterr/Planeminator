@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Autofac;
+using Planeminator.DataIO.Public.Services;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Planeminator.DesktopApp
 {
@@ -23,6 +25,11 @@ namespace Planeminator.DesktopApp
         public MainWindow()
         {
             InitializeComponent();
+
+            using var scope = App.Container.BeginLifetimeScope();
+            var airportImportService = scope.Resolve<IAirportImportService>();
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "airports.json");
+            var test = airportImportService.ImportAirportsFromJson(path);
         }
     }
 }

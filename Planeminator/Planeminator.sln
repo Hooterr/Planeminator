@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planeminator.DesktopApp", "Planeminator.DesktopApp\Planeminator.DesktopApp.csproj", "{A1DC07C5-AA1A-4DB5-91E0-BE064B448FBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Planeminator.DesktopApp", "Planeminator.DesktopApp\Planeminator.DesktopApp.csproj", "{A1DC07C5-AA1A-4DB5-91E0-BE064B448FBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planeminator.Domain", "Planeminator.Domain\Planeminator.Domain.csproj", "{9ECEB72E-2C46-4490-8BC6-5B7F7041FE20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Planeminator.Domain", "Planeminator.Domain\Planeminator.Domain.csproj", "{9ECEB72E-2C46-4490-8BC6-5B7F7041FE20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planeminator.DataIO", "Planeminator.DataIO\Planeminator.DataIO.csproj", "{45E170B6-F25B-483A-9C2E-7C9E9F415392}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{9ECEB72E-2C46-4490-8BC6-5B7F7041FE20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ECEB72E-2C46-4490-8BC6-5B7F7041FE20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ECEB72E-2C46-4490-8BC6-5B7F7041FE20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45E170B6-F25B-483A-9C2E-7C9E9F415392}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45E170B6-F25B-483A-9C2E-7C9E9F415392}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45E170B6-F25B-483A-9C2E-7C9E9F415392}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45E170B6-F25B-483A-9C2E-7C9E9F415392}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
