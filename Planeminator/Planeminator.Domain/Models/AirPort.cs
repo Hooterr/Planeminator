@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Geolocation;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -23,5 +24,7 @@ namespace Planeminator.Domain.Models
         /// Planes available on this airport
         /// </summary>
         public List<Plane> AvailablePlanes { get; set; }
+
+        public Coordinate Coordinate { get; set; }
     }
 }

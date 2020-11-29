@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace Planeminator.Algorithm.DataStructures
 {
-    interface class AirportDistanceMap : IAirportDistanceMap
+    internal class AirportDistanceMap : IAirportDistanceMap
     {
         private Dictionary<IAirport, Dictionary<IAirport, double>> _map;
 
         public double GetDistance(IAirport from, IAirport to)
         {
-            return 0.0;
+            return _map[from][to];
         }
 
         private AirportDistanceMap()
