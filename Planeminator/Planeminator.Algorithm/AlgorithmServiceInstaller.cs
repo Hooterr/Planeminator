@@ -1,10 +1,4 @@
 ﻿using Autofac;
-using Planeminator.Domain;
-using Planeminator.Domain.Models;
-using Planeminator.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Planeminator.Algorithm
 {
