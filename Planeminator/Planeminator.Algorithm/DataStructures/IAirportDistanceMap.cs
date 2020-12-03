@@ -7,6 +7,6 @@ namespace Planeminator.Algorithm.DataStructures
 {
     internal interface IAirportDistanceMap
     {
-        double GetDistance(IAirport from, IAirport to);
+        double GetDistance(AlgorithmAirport from, AlgorithmAirport to);
     }
 }

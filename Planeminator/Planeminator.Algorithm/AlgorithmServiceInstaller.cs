@@ -1,4 +1,7 @@
 ﻿using Autofac;
+using AutoMapper.Contrib.Autofac.DependencyInjection;
+using Planeminator.Algorithm.Public;
+using Planeminator.Algorithm.Services;
 
 namespace Planeminator.Algorithm
 {
@@ -10,7 +13,9 @@ namespace Planeminator.Algorithm
         /// <param name="builder">The builder to add the dependencies to</param>
         public static void Install(ContainerBuilder builder)
         {
-            //builder.RegisterType<AirportImportService>().As<ISolvingService>();
+            builder.RegisterType<SimulationBuilder>().As<ISimulationBuilder>();
+
+            builder.RegisterAutoMapper(typeof(AlgorithmServiceInstaller).Assembly);
         }
     }
 }

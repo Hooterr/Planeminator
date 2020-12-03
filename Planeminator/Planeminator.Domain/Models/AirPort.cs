@@ -8,23 +8,21 @@ namespace Planeminator.Domain.Models
     /// <summary>
     /// Represents an airport in the application
     /// </summary>
-    public class AirPort : IAirport
+    public class Airport
     {
         /// <summary>
-        /// Id of the airport
+        /// Id of this airport
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Packages currently stored at this airport
+        /// <inheritdoc/>
         /// </summary>
-        public List<Package> Packages { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
-        /// Planes available on this airport
+        /// <inheritdoc/>
         /// </summary>
-        public List<Plane> AvailablePlanes { get; set; }
-
         public Coordinate Coordinate { get; set; }
     }
 }

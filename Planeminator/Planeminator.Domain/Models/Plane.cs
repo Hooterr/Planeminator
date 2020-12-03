@@ -9,7 +9,7 @@ namespace Planeminator.Domain.Models
     public class Plane
     {
         /// <summary>
-        /// Id of the plane
+        /// Id of this plane
         /// </summary>
         public int Id { get; set; }
 
@@ -24,14 +24,9 @@ namespace Planeminator.Domain.Models
         public int CarryingCapacity { get; set; }
 
         /// <summary>
-        /// Plane speed in kilometer per hour
+        /// Plane speed in kilometers per hour
         /// </summary>
         public double SpeedKmph { get; set; }
-        
-        /// <summary>
-        /// Packages that are currently on the plane
-        /// </summary>
-        public List<Package> Payload { get; set; }
 
         /// <summary>
         /// The mileage of this plane
