@@ -1,10 +1,6 @@
-﻿using Autofac;
-using Planeminator.DataIO.Public.Services;
-using Planeminator.DesktopApp.Core.ViewModels;
-using Planeminator.DesktopApp.WPFViewModels;
+﻿using Planeminator.DesktopApp.Core.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,21 +12,23 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace Planeminator.DesktopApp
+namespace Planeminator.DesktopApp.Pages
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MainPage.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainPage : BasePage<MainPageViewModel>
     {
-        private readonly WindowViewModel ViewModel;
-
-        public MainWindow()
+        public MainPage()
         {
             InitializeComponent();
-            ViewModel = new WindowViewModel();
-            DataContext = ViewModel;
+        }
+
+        public MainPage(MainPageViewModel viewmodel) : base(viewmodel)
+        {
+            InitializeComponent();
         }
     }
 }

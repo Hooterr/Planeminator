@@ -13,8 +13,4 @@
     <ProjectReference Include="..\Planeminator.Domain\Planeminator.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\" />
-  </ItemGroup>
-
 </Project>

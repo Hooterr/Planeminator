@@ -42,9 +42,13 @@ namespace Planeminator.Algorithm.Services
                     // 1. Unload packages from plane
                     UnloadPackagesFromPlanes();
 
-                    // 2. Choose the packages to be loaded on each plane
+                    // 3. Choose and load packages onto the planes
                     LoadPackagesOntoPlanes();
 
+                    // 4. Fly plane to the next locations
+                    FlyPlanes();
+
+                    // 5. Update the day
                     CurrentTimeUnitNumber++;
                 }
 
@@ -52,6 +56,24 @@ namespace Planeminator.Algorithm.Services
             });
 
             return true;
+        }
+
+        private void FlyPlanes()
+        {
+            Planes.ForEach(plane =>
+            {
+                // Get the next destination airport on the route
+                var destinationAirport = plane.Route.First();
+
+                // Check if it is different the the current airport
+                if (destinationAirport != plane.CurrentAirport)
+                {
+                    // Remove the plane from its current airport
+                    plane.CurrentAirport.AvailablePlanes.Remove(plane);
+                    // And add it to the destination airport
+                    destinationAirport.AvailablePlanes.Add(plane);
+                }
+            });
         }
 
         private void UnloadPackagesFromPlanes()
@@ -82,17 +104,23 @@ namespace Planeminator.Algorithm.Services
             {
                 airport.Packages.ForEach(package =>
                 {
-                    var planeToLoadThePackageOnto = airport.AvailablePlanes
-                        .Select(plane => new
-                        {
-                            plane,
-                            distanceToDestinationInRoute = plane.Route.IndexOf(package.Destination),
-                        })
-                        .Where(x => x.distanceToDestinationInRoute != -1)
-                        .OrderBy(x => x.distanceToDestinationInRoute)
-                        .Select(x => x.plane)
-                        .FirstOrDefault();
-                      
+                    var planeToLoadThePackageOnto = 
+                                                    airport.AvailablePlanes
+                                                    .Select(plane => new
+                                                    {
+                                                        plane,
+                                                        distanceToDestinationInRoute = plane.Route.IndexOf(package.Destination),
+                                                    })
+                                                    .Where(x => x.distanceToDestinationInRoute != -1)
+                                                    .OrderBy(x => x.distanceToDestinationInRoute)
+                                                    .Select(x => x.plane)
+                                                    .FirstOrDefault();
+
+                    if (planeToLoadThePackageOnto != null)
+                    {
+                        planeToLoadThePackageOnto.Packages.Add(package);
+                        airport.Packages.Remove(package);
+                    }
                 });
             });
         }

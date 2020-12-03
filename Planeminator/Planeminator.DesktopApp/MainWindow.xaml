@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Planeminator.DesktopApp" 
+        xmlns:vms="clr-namespace:Planeminator.DesktopApp.WPFViewModels"
         xmlns:controls="clr-namespace:Planeminator.DesktopApp.Controls"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
@@ -21,7 +22,9 @@
             </MenuItem>
         </Menu>
 
-        <controls:PageHost Grid.Row="1"> </controls:PageHost>
+        <controls:PageHost Grid.Row="1"
+                           CurrentPage="{Binding ApplicationViewModel.CurrentPage, Source={x:Static vms:ViewModelLocator.Instance}}"
+                           CurrentPageViewModel="{Binding ApplicationViewModel.CurrentPageViewModel, Source={x:Static vms:ViewModelLocator.Instance}}"/>
 
         <StatusBar Grid.Row="2">
             <StatusBarItem>

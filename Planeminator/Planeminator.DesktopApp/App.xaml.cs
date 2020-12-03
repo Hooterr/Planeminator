@@ -3,6 +3,8 @@ using AutoMapper.Contrib.Autofac.DependencyInjection;
 using Planeminator.Algorithm;
 using Planeminator.DataIO;
 using Planeminator.DesktopApp.Core;
+using Planeminator.DesktopApp.Core.ViewModels;
+using Planeminator.DesktopApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,6 +25,9 @@ namespace Planeminator.DesktopApp
         protected override void OnStartup(StartupEventArgs e)
         {
             var builder = new ContainerBuilder();
+
+            builder.RegisterInstance(ApplicationViewModel.Instance).ExternallyOwned().SingleInstance();
+            builder.RegisterType<MainPageViewModel>().AsSelf();
 
             DataIOServiceInstaller.Install(builder);
             AlgorithmServiceInstaller.Install(builder);
