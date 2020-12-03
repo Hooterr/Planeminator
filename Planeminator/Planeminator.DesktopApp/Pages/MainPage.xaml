@@ -7,8 +7,72 @@
                 xmlns:local="clr-namespace:Planeminator.DesktopApp.Pages"
                 xmlns:core="clr-namespace:Planeminator.DesktopApp.Core.ViewModels;assembly=Planeminator.DesktopApp.Core"
                 mc:Ignorable="d" 
-                d:DesignHeight="450" d:DesignWidth="800">
+                d:DesignHeight="450" d:DesignWidth="800"
+                d:Background="White"
+                Padding="10">
     <Grid>
-        <TextBlock Text="{Binding}"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MinWidth="100"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*" MinWidth="100"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+                <DockPanel>
+                    <TextBlock Text="Seed: "
+                               DockPanel.Dock="Left"/>
+                    <TextBox Text="{Binding Seed, Mode=TwoWay}"
+                             DockPanel.Dock="Right"
+                             />
+                </DockPanel>
+
+                <DockPanel Margin="0 5">
+                    <TextBlock Text="Number of days: "
+                               DockPanel.Dock="Left"/>
+                    <TextBox Text="{Binding Seed, Mode=TwoWay}"
+                             DockPanel.Dock="Right"
+                             />
+                </DockPanel>
+
+            </StackPanel>
+            
+            <DockPanel Grid.Row="2"
+                       Margin="0 10 0 0">
+                
+                <StackPanel Margin="0 5"
+                           DockPanel.Dock="Top">
+                    <Button Content="Import airports"
+                            Command="{Binding ImportAirportsCommand}"/>
+                    <TextBlock Text="{Binding AirportsPath}"/>
+                    <TextBlock>
+                        <Run Text="Loaded:"/>  
+                        <Run Text="{Binding AirportsCount, Mode=OneWay}"/>
+                        <Run Text="airports"/>
+                    </TextBlock>
+                </StackPanel>
+                <DataGrid DockPanel.Dock="Bottom"
+                          ItemsSource="{Binding Airports}"
+                          AutoGenerateColumns="False"
+                          AlternatingRowBackground="LightBlue">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header = "Name" Binding = "{Binding Name}" />
+                        <DataGridTextColumn Header = "City" Binding = "{Binding City}" />
+                        <DataGridTextColumn Header = "Country" Binding = "{Binding Country}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+
+        </Grid>
+
+        <GridSplitter Grid.Column="1" Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Center" />
+
+        <Grid Grid.Column="2" Background="Blue"/>
+
     </Grid>
 </local:BasePage>

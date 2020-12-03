@@ -3,7 +3,9 @@ using AutoMapper.Contrib.Autofac.DependencyInjection;
 using Planeminator.Algorithm;
 using Planeminator.DataIO;
 using Planeminator.DesktopApp.Core;
+using Planeminator.DesktopApp.Core.Services;
 using Planeminator.DesktopApp.Core.ViewModels;
+using Planeminator.DesktopApp.Services;
 using Planeminator.DesktopApp.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -28,6 +30,7 @@ namespace Planeminator.DesktopApp
 
             builder.RegisterInstance(ApplicationViewModel.Instance).ExternallyOwned().SingleInstance();
             builder.RegisterType<MainPageViewModel>().AsSelf();
+            builder.RegisterType<FileDialogService>().As<IFileDialogService>();
 
             DataIOServiceInstaller.Install(builder);
             AlgorithmServiceInstaller.Install(builder);
