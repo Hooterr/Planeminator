@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using AutoMapper.Contrib.Autofac.DependencyInjection;
+using Planeminator.Algorithm;
 using Planeminator.DataIO;
+using Planeminator.DesktopApp.Core;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,6 +25,8 @@ namespace Planeminator.DesktopApp
             var builder = new ContainerBuilder();
 
             DataIOServiceInstaller.Install(builder);
+            AlgorithmServiceInstaller.Install(builder);
+            CoreServicesInstaller.Install(builder);
 
             Container = builder.Build();
             

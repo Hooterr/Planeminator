@@ -9,7 +9,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Planeminator.Algorithm\Planeminator.Algorithm.csproj" />
     <ProjectReference Include="..\Planeminator.DataIO\Planeminator.DataIO.csproj" />
+    <ProjectReference Include="..\Planeminator.DesktopApp.Core\Planeminator.DesktopApp.Core.csproj" />
     <ProjectReference Include="..\Planeminator.Domain\Planeminator.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\" />
   </ItemGroup>
 
 </Project>
