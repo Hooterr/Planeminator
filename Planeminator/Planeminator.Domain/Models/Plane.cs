@@ -1,4 +1,5 @@
 ﻿using Planeminator.Domain.Functions;
+using System;
 using System.Collections.Generic;
 
 namespace Planeminator.Domain.Models
@@ -21,11 +22,13 @@ namespace Planeminator.Domain.Models
         /// <summary>
         /// Carrying capacity in KG
         /// </summary>
+        [Obsolete]
         public int CarryingCapacity { get; set; }
 
         /// <summary>
         /// Plane speed in kilometers per hour
         /// </summary>
+        [Obsolete]
         public double SpeedKmph { get; set; }
 
         /// <summary>

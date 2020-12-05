@@ -7,7 +7,7 @@
         xmlns:vms="clr-namespace:Planeminator.DesktopApp.WPFViewModels"
         xmlns:controls="clr-namespace:Planeminator.DesktopApp.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1024">
+        Title="MainWindow" Height="900" Width="1500">
 
     <Grid>
         <Grid.RowDefinitions>

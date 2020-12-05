@@ -3,6 +3,7 @@ using Planeminator.Algorithm.Public;
 using Planeminator.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,6 +11,10 @@ namespace Planeminator.Algorithm.Services
 {
     internal class SimulationImplementation : Simulation
     {
+        [Description("k")]
+        public const double PriceFulePerLiter = 5;
+
+
         private readonly IAirportDistanceMap DistanceMap;
         private readonly List<AlgorithmAirport> Airports;
         private readonly List<AlgorithmPlane> Planes;
@@ -37,18 +42,18 @@ namespace Planeminator.Algorithm.Services
                 CurrentTimeUnitNumber = 0;
                 InitializeSimulation();
 
-                for (int i = 0; i < 10; i++)
+                for(int i = 0; i < 10; i++)
                 {
                     // 1. Unload packages from plane
                     UnloadPackagesFromPlanes();
 
-                    // 3. Choose and load packages onto the planes
-                    LoadPackagesOntoPlanes();
+                    // 2. IYKWIM
+                    OptimizeRoutes();
 
-                    // 4. Fly plane to the next locations
+                    // 3. Fly plane to the next locations
                     FlyPlanes();
 
-                    // 5. Update the day
+                    // 4. Update the time unit
                     CurrentTimeUnitNumber++;
                 }
 
@@ -56,6 +61,44 @@ namespace Planeminator.Algorithm.Services
             });
 
             return true;
+        }
+
+        private void OptimizeRoutes()
+        {
+            var gettingBetter = true;
+
+            // Generate random routes
+            GenerateRandomRoutesForAllPlanes();
+
+            while (gettingBetter)
+            {
+                // Temporarily assign packages onto planes
+                TemporaryLoadPackagesOntoPlanes();
+
+                // Do stuff...
+                OptimazeRoutesMutateGenesOrDoWhateverIDontCare();
+
+                
+                // Briliant stop condition goes here...
+                gettingBetter = false;
+            }
+        }
+
+        private void OptimazeRoutesMutateGenesOrDoWhateverIDontCare()
+        {
+            // Sick algorithm goes here...
+            var objFctnValue = CalculateObjectiveFunction();
+        }
+        
+        private void GenerateRandomRoutesForAllPlanes()
+        {
+            Planes.ForEach(plane =>
+            {
+                plane.Route = Enumerable
+                                .Range(0, AlgorithmPlane.RouteLength)
+                                .Select(x => GetRandomAirport())
+                                .ToList();
+            });
         }
 
         private void FlyPlanes()
@@ -74,6 +117,20 @@ namespace Planeminator.Algorithm.Services
                     destinationAirport.AvailablePlanes.Add(plane);
                 }
             });
+        }
+
+        private double CalculateObjectiveFunction()
+        {
+            return Planes.Sum(plane => 
+                plane.Route.Sum(routeItem => 
+                    -GetFlightCost(plane, routeItem) + plane.Packages.Sum(package =>  /* TBD Start */package.Destination == routeItem ? package.Income : 0 - 0  /* TBD End */)));
+        }
+
+
+        private double GetFlightCost(AlgorithmPlane plane, AlgorithmAirport destination)
+        {
+            //                                           Improve complexity by caching total package weight
+            return plane.Mileague.CalculateMailage(plane.Packages.Sum(package => package.MassKg)) * PriceFulePerLiter * DistanceMap.GetDistance(plane.CurrentAirport, destination);
         }
 
         private void UnloadPackagesFromPlanes()
@@ -98,28 +155,48 @@ namespace Planeminator.Algorithm.Services
             });
         }
 
-        private void LoadPackagesOntoPlanes()
+        /// <summary>
+        /// Temporarily loads the packages on the planes.
+        /// <para>During this assignemnt packages are <b>not</b> removed from the airport's package pool.</para>
+        /// </summary>
+        private void TemporaryLoadPackagesOntoPlanes()
+        {
+            AssignPackagesToPlanes(temporarily: true);
+        }
+
+        /// <summary>
+        /// Pernamently loads the packages on the planes.
+        /// <para>During this assignemnt packages <b>are</b> removed from the airport's package pool.</para>
+        /// </summary>
+        private void LoadPackgesOntoPlanesFinal()
+        {
+            AssignPackagesToPlanes(temporarily: false);
+        }
+
+        private void AssignPackagesToPlanes(bool temporarily)
         {
             Airports.ForEach(airport =>
             {
                 airport.Packages.ForEach(package =>
                 {
-                    var planeToLoadThePackageOnto = 
-                                                    airport.AvailablePlanes
-                                                    .Select(plane => new
-                                                    {
-                                                        plane,
-                                                        distanceToDestinationInRoute = plane.Route.IndexOf(package.Destination),
-                                                    })
-                                                    .Where(x => x.distanceToDestinationInRoute != -1)
-                                                    .OrderBy(x => x.distanceToDestinationInRoute)
-                                                    .Select(x => x.plane)
-                                                    .FirstOrDefault();
+                    var planeToLoadThePackageOnto =
+                        airport.AvailablePlanes
+                        .Select(plane => new
+                        {
+                            plane,
+                            distanceToDestinationInRoute = plane.Route.IndexOf(package.Destination),
+                        })
+                        .Where(x => x.distanceToDestinationInRoute != -1)
+                        .OrderBy(x => x.distanceToDestinationInRoute)
+                        .Select(x => x.plane)
+                        .FirstOrDefault();
 
                     if (planeToLoadThePackageOnto != null)
                     {
                         planeToLoadThePackageOnto.Packages.Add(package);
-                        airport.Packages.Remove(package);
+
+                        if (temporarily == false)
+                            airport.Packages.Remove(package);
                     }
                 });
             });
@@ -127,17 +204,13 @@ namespace Planeminator.Algorithm.Services
 
         private void InitializeSimulation()
         {
-            // Assign random planes to random airports and generate random route
+            // Assign random planes to random airports
             Planes.ForEach(plane =>
             {
-                var airport = GetRndomAirport();
+                var airport = GetRandomAirport();
                 airport.AvailablePlanes.Add(plane);
                 plane.CurrentAirport = airport;
 
-                // Random routes for all planes
-                plane.Route = Enumerable.Range(0, AlgorithmPlane.RouteLength)
-                                .Select(x => GetRndomAirport())
-                                .ToList();
             });
 
             GenerateNewPackagesForAiports();
@@ -161,7 +234,7 @@ namespace Planeminator.Algorithm.Services
 
                     while(package.Destination == null || package.Destination == package.Origin)
                     {
-                        package.Destination = GetRndomAirport();
+                        package.Destination = GetRandomAirport();
                     }
 
                     newPackages.Add(package);
@@ -173,12 +246,12 @@ namespace Planeminator.Algorithm.Services
 
         #region Helpers
 
-        private AlgorithmAirport GetRndomAirport()
+        private AlgorithmAirport GetRandomAirport()
         {
             return Airports[rng.Next(0, Airports.Count - 1)];
         }
 
-        private AlgorithmPlane GetRndomPlane()
+        private AlgorithmPlane GetRandomPlane()
         {
             return Planes[rng.Next(0, Planes.Count - 1)];
         }
