@@ -1,12 +1,11 @@
-﻿using Planeminator.Domain.Models;
+﻿using Planeminator.Domain.Interfaces;
+using Planeminator.Domain.Models;
 using System;
 
 namespace Planeminator.Algorithm.DataStructures
 {
-    internal class AlgorithmPackage
+    internal class AlgorithmPackage : IPackage<AlgorithmAirport>
     {
-        public int InternalId { get; set; }
-
         public int DeadlineInTimeUnits { get; set; }
 
         public double Income { get; set; }

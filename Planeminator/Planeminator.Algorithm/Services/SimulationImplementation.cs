@@ -1,5 +1,8 @@
-﻿using Planeminator.Algorithm.DataStructures;
+﻿using Autofac;
+using AutoMapper;
+using Planeminator.Algorithm.DataStructures;
 using Planeminator.Algorithm.Public;
+using Planeminator.Domain.DI;
 using Planeminator.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -12,34 +15,54 @@ namespace Planeminator.Algorithm.Services
     internal class SimulationImplementation : Simulation
     {
         [Description("k")]
-        public const double PriceFulePerLiter = 5;
-
+        public const double FuelPricePerLiter = 5;
 
         private readonly IAirportDistanceMap DistanceMap;
         private readonly List<AlgorithmAirport> Airports;
         private readonly List<AlgorithmPlane> Planes;
         private readonly Random rng;
+        private readonly IMapper mapper;
+        private readonly IReportingService reporting;
 
-        public SimulationImplementation(List<AlgorithmAirport> airports, List<AlgorithmPlane> planes, int seed) : this(airports, planes)
+        public SimulationImplementation(List<Airport> airports, List<Plane> planes, int seed) : this(airports, planes)
         {
             rng = new Random(seed);
         }
 
-        public SimulationImplementation(List<AlgorithmAirport> airports, List<AlgorithmPlane> planes)
+        public SimulationImplementation(List<Airport> airports, List<Plane> planes)
         {
-            DistanceMap = AirportDistanceMap.FromAirports(airports);
-            Airports = airports;
-            Planes = planes;
+            using var scope = Framework.Container.BeginLifetimeScope();
+            mapper = scope.Resolve<IMapper>();
+            reporting = scope.Resolve<IReportingService>();
+
+            var algAirports = mapper.Map<List<AlgorithmAirport>>(airports);
+            var algPlanes = mapper.Map<List<AlgorithmPlane>>(planes);
+
+            var idCurrent = 0;
+            foreach (var airport in algAirports)
+            {
+                airport.InternalId = idCurrent++;
+            }
+
+            idCurrent = 0;
+            foreach (var plane in algPlanes)
+            {
+                plane.InternalId = idCurrent++;
+            }
+
+            DistanceMap = AirportDistanceMap.FromAirports(algAirports);
+            Airports = algAirports;
+            Planes = algPlanes;
+            reporting.WithAiports(Airports).WithPlanes(Planes);
+
             rng ??= new Random();
         }
-
-        private int CurrentTimeUnitNumber;
 
         public override async Task<bool> Start()
         {
             await Task.Run(() =>
             {
-                CurrentTimeUnitNumber = 0;
+                var CurrentTimeUnitNumber = 0;
                 InitializeSimulation();
 
                 for(int i = 0; i < 10; i++)
@@ -130,7 +153,7 @@ namespace Planeminator.Algorithm.Services
         private double GetFlightCost(AlgorithmPlane plane, AlgorithmAirport destination)
         {
             //                                           Improve complexity by caching total package weight
-            return plane.Mileague.CalculateMailage(plane.Packages.Sum(package => package.MassKg)) * PriceFulePerLiter * DistanceMap.GetDistance(plane.CurrentAirport, destination);
+            return plane.Mileague.CalculateMailage(plane.Packages.Sum(package => package.MassKg)) * FuelPricePerLiter * DistanceMap.GetDistance(plane.CurrentAirport, destination);
         }
 
         private void UnloadPackagesFromPlanes()

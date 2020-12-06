@@ -12,11 +12,9 @@ namespace Planeminator.Algorithm.Services
         private List<Plane> planes;
         private List<Airport> airports;
         private int? seed;
-        private readonly IMapper mapper;
 
-        public SimulationBuilder(IMapper _mapper)
+        public SimulationBuilder()
         {
-            mapper = _mapper;
         }
 
         public ISimulationBuilder WithPlanes(List<Plane> planes)
@@ -39,24 +37,13 @@ namespace Planeminator.Algorithm.Services
 
         public Simulation Build()
         {
-            var algAirports = mapper.Map<List<AlgorithmAirport>>(airports);
-            var algPlanes = mapper.Map<List<AlgorithmPlane>>(planes);
+            SimulationImplementation sim = null;
 
-            var idCurrent = 0;
-            foreach (var airport in algAirports)
-            {
-                airport.InternalId = idCurrent++;
-                airport.Packages = new List<AlgorithmPackage>();
-            }
+            if (seed.HasValue)
+                sim = new SimulationImplementation(airports, planes, seed.Value);
+            else
+                sim = new SimulationImplementation(airports, planes);
 
-            idCurrent = 0;
-            foreach (var plane in algPlanes)
-            {
-                plane.InternalId = idCurrent++;
-                plane.Packages = new List<AlgorithmPackage>();
-            }
-
-            var sim = new SimulationImplementation(algAirports, algPlanes);
             return sim;
         }
     }

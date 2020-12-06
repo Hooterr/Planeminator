@@ -5,8 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Abstract\" />
+    <Compile Remove="Abstract\**" />
+    <EmbeddedResource Remove="Abstract\**" />
+    <None Remove="Abstract\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Converters\" />
+    <Folder Include="Enumerations\" />
   </ItemGroup>
 
   <ItemGroup>

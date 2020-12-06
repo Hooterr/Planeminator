@@ -17,6 +17,8 @@ namespace Planeminator.Algorithm.DataStructures
 
         public List<AlgorithmAirport> Route { get; set; }
 
+        public Plane AssociatedPlane { get; set; }
+
         public AlgorithmPlane()
         {
             CurrentAirport = new AlgorithmAirport();

@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Planeminator.DesktopApp.Core.ViewModels.Base;
+using Planeminator.Domain.DI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -116,7 +117,7 @@ namespace Planeminator.DesktopApp.Pages
             else
             {
                 // Create a default view model
-                using ILifetimeScope scope = App.Container.BeginLifetimeScope();
+                using ILifetimeScope scope = Framework.Container.BeginLifetimeScope();
                 ViewModel = scope.Resolve<VM>() ?? new VM();
             }
         }
@@ -139,7 +140,7 @@ namespace Planeminator.DesktopApp.Pages
                 else
                 {
                     // Create a default view model
-                    using ILifetimeScope scope = App.Container.BeginLifetimeScope();
+                    using ILifetimeScope scope = Framework.Container.BeginLifetimeScope();
                     ViewModel = scope.Resolve<VM>() ?? new VM();
                 }
             }

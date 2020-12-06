@@ -7,6 +7,7 @@ using Planeminator.DesktopApp.Core.Services;
 using Planeminator.DesktopApp.Core.ViewModels;
 using Planeminator.DesktopApp.Services;
 using Planeminator.DesktopApp.ViewModels;
+using Planeminator.Domain.DI;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -21,23 +22,21 @@ namespace Planeminator.DesktopApp
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
-    {
-        public static IContainer Container { get; private set; }
+    { 
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            var builder = new ContainerBuilder();
+            Framework.Construct(builder =>
+            {
+                builder.RegisterInstance(ApplicationViewModel.Instance).ExternallyOwned().SingleInstance();
+                builder.RegisterType<MainPageViewModel>().AsSelf();
+                builder.RegisterType<FileDialogService>().As<IFileDialogService>();
 
-            builder.RegisterInstance(ApplicationViewModel.Instance).ExternallyOwned().SingleInstance();
-            builder.RegisterType<MainPageViewModel>().AsSelf();
-            builder.RegisterType<FileDialogService>().As<IFileDialogService>();
+                DataIOServiceInstaller.Install(builder);
+                AlgorithmServiceInstaller.Install(builder);
+                CoreServicesInstaller.Install(builder);
+            });
 
-            DataIOServiceInstaller.Install(builder);
-            AlgorithmServiceInstaller.Install(builder);
-            CoreServicesInstaller.Install(builder);
-
-            Container = builder.Build();
-            
             base.OnStartup(e);
         }
     }

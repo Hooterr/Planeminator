@@ -14,6 +14,7 @@ namespace Planeminator.Algorithm
         public static void Install(ContainerBuilder builder)
         {
             builder.RegisterType<SimulationBuilder>().As<ISimulationBuilder>();
+            builder.RegisterType<ReportingService>().As<IReportingService>();
 
             builder.RegisterAutoMapper(typeof(AlgorithmServiceInstaller).Assembly);
         }

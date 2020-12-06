@@ -12,11 +12,12 @@ namespace Planeminator.Algorithm.DataStructures
 
         public List<AlgorithmPlane> AvailablePlanes { get; set; }
 
-
         public AlgorithmAirport()
         {
             Packages = new List<AlgorithmPackage>();
             AvailablePlanes = new List<AlgorithmPlane>();
         }
+
+        public Airport AssociatedAirport { get; set; }
     }
 }

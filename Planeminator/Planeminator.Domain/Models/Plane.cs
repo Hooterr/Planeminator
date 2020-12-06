@@ -20,18 +20,6 @@ namespace Planeminator.Domain.Models
         public string Model { get; set; }
 
         /// <summary>
-        /// Carrying capacity in KG
-        /// </summary>
-        [Obsolete]
-        public int CarryingCapacity { get; set; }
-
-        /// <summary>
-        /// Plane speed in kilometers per hour
-        /// </summary>
-        [Obsolete]
-        public double SpeedKmph { get; set; }
-
-        /// <summary>
         /// The mileage of this plane
         /// </summary>
         public IMileageFunction Mileague { get; set; }

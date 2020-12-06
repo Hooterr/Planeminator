@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Planeminator.DesktopApp.ViewModels;
+using Planeminator.Domain.DI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,6 @@ namespace Planeminator.DesktopApp.WPFViewModels
     {
         public static ViewModelLocator Instance { get; private set; } = new ViewModelLocator();
 
-        public ApplicationViewModel ApplicationViewModel => App.Container.BeginLifetimeScope().Resolve<ApplicationViewModel>();
+        public ApplicationViewModel ApplicationViewModel => Framework.Container.BeginLifetimeScope().Resolve<ApplicationViewModel>();
     }
 }
