@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using AutoMapper.Contrib.Autofac.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,6 +15,8 @@ namespace Planeminator.DesktopApp.Core
         public static void Install(ContainerBuilder builder)
         {
             //builder.RegisterType<AirportImportService>().As<ISolvingService>();
+
+            builder.RegisterAutoMapper(typeof(CoreServicesInstaller).Assembly);
         }
     }
 }

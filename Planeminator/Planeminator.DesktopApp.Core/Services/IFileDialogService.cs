@@ -8,5 +8,8 @@ namespace Planeminator.DesktopApp.Core.Services
     {
         string BrowseForFile(string filter);
         string BrowseForFile();
+
+        string SaveToFile(string filter);
+        string SaveToFile();
     }
 }

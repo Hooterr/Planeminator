@@ -33,5 +33,31 @@ namespace Planeminator.DesktopApp.Services
             }
             return null;
         }
+
+        public string SaveToFile(string filter)
+        {
+            return SaveToFileNativeDialog(filter);
+        }
+
+        public string SaveToFile()
+        {
+            return SaveToFileNativeDialog();
+        }
+
+        private string SaveToFileNativeDialog(string filter = null)
+        {
+            var dialog = new SaveFileDialog()
+            {
+                Filter = filter,
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                return dialog.FileName;
+            }
+
+            return null;
+        }
+
     }
 }

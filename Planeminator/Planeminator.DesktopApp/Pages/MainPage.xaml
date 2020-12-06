@@ -56,11 +56,19 @@
                         <Run Text="airports"/>
                     </TextBlock>
                 </StackPanel>
+
+                <Button Content="Save airports as..."
+                        Command="{Binding SaveAirportsCommand}"
+                        DockPanel.Dock="Bottom"
+                        />
+                
                 <DataGrid DockPanel.Dock="Bottom"
                           ItemsSource="{Binding Airports}"
                           AutoGenerateColumns="False"
+                          CanUserAddRows="False"
                           AlternatingRowBackground="LightBlue">
                     <DataGrid.Columns>
+                        <DataGridCheckBoxColumn Header = "Include" Binding = "{Binding IsChecked, Mode=TwoWay}"/>
                         <DataGridTextColumn Header = "Name" Binding = "{Binding Name}" />
                         <DataGridTextColumn Header = "City" Binding = "{Binding City}" />
                         <DataGridTextColumn Header = "Country" Binding = "{Binding Country}" />
@@ -72,7 +80,10 @@
 
         <GridSplitter Grid.Column="1" Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Center" />
 
-        <Grid Grid.Column="2" Background="Blue"/>
+        <Grid Grid.Column="2">
+            <Button Content="Start simulation"
+                    Command="{Binding StartSimulationCommand}"/>
+        </Grid>
 
     </Grid>
 </local:BasePage>

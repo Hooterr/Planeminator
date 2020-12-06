@@ -13,8 +13,10 @@ namespace Planeminator.DataIO.Mappers
         public DefaultProfile()
         {
             CreateMap<AirportListItem, ImportedAirport>()
-                .ForMember(dest => dest.Coordinate, opt => opt.MapFrom(source => 
-                    new Coordinate() { Latitude = source.Geolocation.Latitude, Longitude = source.Geolocation.Longitude }));
+                .ForMember(dest => dest.Coordinate, opt => opt.MapFrom(source =>
+                    new Coordinate() { Latitude = source.Geolocation.Latitude, Longitude = source.Geolocation.Longitude }))
+                .ReverseMap()
+                .ForMember(dest => dest.Geolocation, opt => opt.MapFrom(src => new GeolocationItem() { Latitude = src.Coordinate.Latitude, Longitude = src.Coordinate.Longitude }));
         }
     }
 }
