@@ -124,7 +124,7 @@ namespace Planeminator.Algorithm.Services
             {
                 progress(CurrentTimeUnitNumber + 1, itn + 1);
 
-                // Reload packages onto planes
+                // Reload packages onto planes <---- this one takes the most time
                 LoadPackgesOntoPlanesFinal();
 
                 // Do stuff...

@@ -43,6 +43,28 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 
         public bool NotRunning => !Running;
 
+        public string FuelPrice { get; set; } = "30";
+
+        public string NumberOfRounds { get; set; } = "30";
+
+        public string PackageMassMean { get; set; } = "10";
+        public string PackageMassStd { get; set; } = "5";
+        public string PackageMassMin { get; set; } = "0.001";
+
+
+        public string PackageIncomeMean { get; set; } = "10";
+        public string PackageIncomeStd { get; set; } = "5";
+        public string PackageIncomeMin { get; set; } = "0.001";
+
+
+        public string PackageDeadlineMean { get; set; } = "10";
+        public string PackageDeadlineStd { get; set; } = "5";
+        public string PackageDeadlineMin { get; set; } = "0.001";
+
+
+        public string PackageCountMean { get; set; } = "10";
+        public string PackageCountStd { get; set; } = "5";
+        public string PackageCountMin { get; set; } = "0.001";
         #region Commands 
 
         public ICommand ImportAirportsCommand { get; set; }
@@ -74,11 +96,13 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 
         private async void StartSimulation()
         {
-            var airports = mMapper.Map<List<Airport>>(Airports);
-            var builder = SimulationBuilder.New();
-            builder.Settings = new SimulationSettings()
+            try
             {
-                Planes = new List<Plane>()
+                var airports = mMapper.Map<List<Airport>>(Airports);
+                var builder = SimulationBuilder.New();
+                builder.Settings = new SimulationSettings()
+                {
+                    Planes = new List<Plane>()
                 {
                     new Plane()
                     {
@@ -131,50 +155,55 @@ namespace Planeminator.DesktopApp.Core.ViewModels
                         Mileague = new QuadraticMileageFunction(7, 15, 14),
                     },
                 },
-                Airports = airports,
-                DurationInTimeUnits = TotalRounds,
-                FuelPricePerLiter = 30,
-                PackageGeneration = new PackageGenerationSettings()
-                {
-                    CountDistribution = new AlgorithmNormalDistributionParameters()
+                    Airports = airports,
+                    DurationInTimeUnits = TotalRounds,
+                    FuelPricePerLiter = 30,
+                    PackageGeneration = new PackageGenerationSettings()
                     {
-                        Mean = 10,
-                        StandardDeviation = 5,
-                        MinValue = 0,
-                    },
-                    DeadlineDistribution = new AlgorithmNormalDistributionParameters()
-                    {
-                        Mean = 7,
-                        StandardDeviation = 5,
-                        MinValue = 1,
-                    },
-                    IncomeDistribution = new AlgorithmNormalDistributionParameters()
-                    {
-                        Mean = 20,
-                        StandardDeviation = 5,
-                        MinValue = 1,
-                    },
-                    MassDistribution = new AlgorithmNormalDistributionParameters()
-                    {
-                        Mean = 20,
-                        StandardDeviation = 10,
-                        MinValue = 0.01,
+                        CountDistribution = new AlgorithmNormalDistributionParameters()
+                        {
+                            Mean = double.Parse(PackageCountMean),
+                            StandardDeviation = double.Parse(PackageCountStd),
+                            MinValue = double.Parse(PackageCountMin),
+                        },
+                        DeadlineDistribution = new AlgorithmNormalDistributionParameters()
+                        {
+                            Mean = double.Parse(PackageDeadlineMean),
+                            StandardDeviation = double.Parse(PackageDeadlineStd),
+                            MinValue = double.Parse(PackageDeadlineMin),
+                        },
+                        IncomeDistribution = new AlgorithmNormalDistributionParameters()
+                        {
+                            Mean = double.Parse(PackageIncomeMean),
+                            StandardDeviation = double.Parse(PackageIncomeStd),
+                            MinValue = double.Parse(PackageIncomeMin),
+                        },
+                        MassDistribution = new AlgorithmNormalDistributionParameters()
+                        {
+                            Mean = double.Parse(PackageMassMean),
+                            StandardDeviation = double.Parse(PackageMassStd),
+                            MinValue = double.Parse(PackageMassMin),
+                        }
                     }
+                };
+
+                if (int.TryParse(Seed, out var seedInt))
+                    builder.Settings.Seed = seedInt;
+                else
+                    builder.Settings.Seed = null;
+
+                builder.ProgressHandler = UpdateProgress;
+
+                var simulation = builder.Build();
+
+                if (await simulation.StartAsync())
+                {
+                    Report = simulation.GetReport();
                 }
-            };
-
-            if (int.TryParse(Seed, out var seedInt))
-                builder.Settings.Seed = seedInt;
-            else
-                builder.Settings.Seed = null;
-
-            builder.ProgressHandler = UpdateProgress;
-
-            var simulation = builder.Build();
-
-            if (await simulation.StartAsync())
+            }
+            catch (Exception ex)
             {
-                Report = simulation.GetReport();
+                Debugger.Break();
             }
         }
 

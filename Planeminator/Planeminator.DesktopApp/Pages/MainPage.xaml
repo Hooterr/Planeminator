@@ -30,6 +30,7 @@
 
             <StackPanel Grid.Row="0">
                 <DockPanel>
+                    <!-- Seed -->
                     <TextBlock Text="Seed: "
                                DockPanel.Dock="Left"/>
                     <TextBox Text="{Binding Seed, Mode=TwoWay}"
@@ -37,12 +38,118 @@
                              />
                 </DockPanel>
 
+                <!-- Fule price -->
                 <DockPanel Margin="0 5">
-                    <TextBlock Text="Number of days: "
+                    <TextBlock Text="Fuel price per liter: "
                                DockPanel.Dock="Left"/>
-                    <TextBox Text="{Binding NNN, Mode=TwoWay}"
+                    <TextBox Text="{Binding FuelPrice, Mode=TwoWay}"
                              DockPanel.Dock="Right"
                              />
+                </DockPanel>
+
+                <!-- Number of times unit to simulate -->
+                <DockPanel Margin="0 5">
+                    <TextBlock Text="Number of times unit to simulate: "
+                               DockPanel.Dock="Left"/>
+                    <TextBox Text="{Binding NumberOfRounds, Mode=TwoWay}"
+                             DockPanel.Dock="Right"
+                             />
+                </DockPanel>
+
+                <!-- Mass of packages distribution -->
+                <DockPanel Margin="0 5"
+                           LastChildFill="True">
+                    <TextBlock Text="Mass of packages distribution    "
+                               DockPanel.Dock="Left"/>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+                        
+                        <TextBlock Text="mean: "/>
+                        <TextBox Text="{Binding PackageMassMean, Mode=TwoWay}"
+                                 Width="50"
+                                 />
+                        <TextBlock Text="std: " Margin="10 0 0 0"/>
+                        <TextBox Text="{Binding PackageMassStd, Mode=TwoWay}"
+                                 Width="50"
+                                 />
+                        <TextBlock Text="min: " Margin="10 0 0 0"/>
+                        <TextBox Text="{Binding PackageMassMin, Mode=TwoWay}"
+                                 Width="50"
+                                 />
+                    </StackPanel>
+
+                </DockPanel>
+
+                <!-- Income of packages distribution -->
+                <DockPanel Margin="0 5"
+                           LastChildFill="True">
+                    <TextBlock Text="Income of packages distribution"
+                               DockPanel.Dock="Left"/>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+
+                        <TextBlock Text="mean: "/>
+                        <TextBox Text="{Binding PackageIncomeMean, Mode=TwoWay}"
+                             Width="50"
+                             />
+                        <TextBlock Text="std: " Margin="10 0 0 0"/>
+                        <TextBox Text="{Binding PackageIncomeStd, Mode=TwoWay}"
+                             Width="50"
+                             />
+                        <TextBlock Text="min: " Margin="10 0 0 0"/>
+                        <TextBox Text="{Binding PackageIncomeMin, Mode=TwoWay}"
+                             Width="50"
+                             />
+                    </StackPanel>
+
+                </DockPanel>
+
+                <!-- Deadline of packages distribution -->
+                <DockPanel Margin="0 5"
+                           LastChildFill="True">
+                    <TextBlock Text="Deadline of packages distribution"
+                               DockPanel.Dock="Left"/>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+
+                        <TextBlock Text="mean: "/>
+                        <TextBox Text="{Binding PackageDeadlineMean, Mode=TwoWay}"
+                             Width="50"
+                             />
+                        <TextBlock Text="std: " Margin="10 0 0 0"/>
+                        <TextBox Text="{Binding PackageDeadlineStd, Mode=TwoWay}"
+                             Width="50"
+                             />
+                        <TextBlock Text="min: " Margin="10 0 0 0"/>
+                        <TextBox Text="{Binding PackageDeadlineMin, Mode=TwoWay}"
+                             Width="50"
+                             />
+                    </StackPanel>
+
+                </DockPanel>
+
+                <!-- Count of packages distribution -->
+                <DockPanel Margin="0 5"
+                           LastChildFill="True">
+                    <TextBlock Text="Package count distribution"
+                               DockPanel.Dock="Left"/>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+
+                        <TextBlock Text="mean: "/>
+                        <TextBox Text="{Binding PackageCountMean, Mode=TwoWay}"
+                             Width="50"
+                             />
+                        <TextBlock Text="std: " Margin="10 0 0 0"/>
+                        <TextBox Text="{Binding PackageCountStd, Mode=TwoWay}"
+                             Width="50"
+                             />
+                        <TextBlock Text="min: " Margin="10 0 0 0"/>
+                        <TextBox Text="{Binding PackageCountMin, Mode=TwoWay}"
+                             Width="50"
+                             />
+                    </StackPanel>
+
                 </DockPanel>
 
             </StackPanel>
