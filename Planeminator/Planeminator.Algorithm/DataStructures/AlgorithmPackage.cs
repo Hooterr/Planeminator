@@ -6,7 +6,11 @@ namespace Planeminator.Algorithm.DataStructures
 {
     internal class AlgorithmPackage : IPackage<AlgorithmAirport>
     {
+        public int Id { get; set; }
+
         public int DeadlineInTimeUnits { get; set; }
+
+        public int DeadlineLeftTimeUnits { get; set; }
 
         public double Income { get; set; }
         

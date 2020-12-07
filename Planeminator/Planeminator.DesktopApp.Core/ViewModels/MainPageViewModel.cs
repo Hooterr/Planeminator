@@ -21,7 +21,7 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 {
     public class MainPageViewModel : BaseViewModel
     {
-        public string Seed { get; set; }
+        public string Seed { get; set; } = 123456.ToString();
 
         public string AirportsPath { get; set; }
 
@@ -30,6 +30,18 @@ namespace Planeminator.DesktopApp.Core.ViewModels
         public List<CheckableImportedAirport> Airports { get; set; }
 
         public SimulationReport Report { get; set; }
+
+        public int TotalRounds { get; set; } = 30;
+
+        public int Iteration { get; set; }
+
+        public int Round { get; set; }
+
+        public double Percentage { get; set; }
+
+        public bool Running { get; set; }
+
+        public bool NotRunning => !Running;
 
         #region Commands 
 
@@ -62,11 +74,11 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 
         private async void StartSimulation()
         {
-            var planes = mMapper.Map<List<Airport>>(Airports);
-            using var scope = Framework.Container.BeginLifetimeScope();
-            var builder = scope.Resolve<ISimulationBuilder>();
-            builder
-                .WithPlanes(new List<Plane>()
+            var airports = mMapper.Map<List<Airport>>(Airports);
+            var builder = SimulationBuilder.New();
+            builder.Settings = new SimulationSettings()
+            {
+                Planes = new List<Plane>()
                 {
                     new Plane()
                     {
@@ -111,18 +123,52 @@ namespace Planeminator.DesktopApp.Core.ViewModels
                     new Plane()
                     {
                         Model = "Antonov 9",
-                        Mileague =  new QuadraticMileageFunction(5, 5, 20),
+                        Mileague = new QuadraticMileageFunction(5, 5, 20),
                     },
                     new Plane()
                     {
                         Model = "Antonov 10",
-                        Mileague =  new QuadraticMileageFunction(7, 15, 14),
+                        Mileague = new QuadraticMileageFunction(7, 15, 14),
                     },
-                })
-                .WithAirports(planes);
+                },
+                Airports = airports,
+                DurationInTimeUnits = TotalRounds,
+                FuelPricePerLiter = 30,
+                PackageGeneration = new PackageGenerationSettings()
+                {
+                    CountDistribution = new AlgorithmNormalDistributionParameters()
+                    {
+                        Mean = 10,
+                        StandardDeviation = 5,
+                        MinValue = 0,
+                    },
+                    DeadlineDistribution = new AlgorithmNormalDistributionParameters()
+                    {
+                        Mean = 7,
+                        StandardDeviation = 5,
+                        MinValue = 1,
+                    },
+                    IncomeDistribution = new AlgorithmNormalDistributionParameters()
+                    {
+                        Mean = 20,
+                        StandardDeviation = 5,
+                        MinValue = 1,
+                    },
+                    MassDistribution = new AlgorithmNormalDistributionParameters()
+                    {
+                        Mean = 20,
+                        StandardDeviation = 10,
+                        MinValue = 0.01,
+                    }
+                }
+            };
 
             if (int.TryParse(Seed, out var seedInt))
-                builder.WithSeed(seedInt);
+                builder.Settings.Seed = seedInt;
+            else
+                builder.Settings.Seed = null;
+
+            builder.ProgressHandler = UpdateProgress;
 
             var simulation = builder.Build();
 
@@ -130,6 +176,13 @@ namespace Planeminator.DesktopApp.Core.ViewModels
             {
                 Report = simulation.GetReport();
             }
+        }
+
+        private void UpdateProgress(int round, int interation)
+        {
+            Percentage = (double)round / TotalRounds * 100;
+            Iteration = interation;
+            Round = round;
         }
 
         private void SaveAirports()

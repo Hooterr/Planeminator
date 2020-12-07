@@ -40,7 +40,7 @@
                 <DockPanel Margin="0 5">
                     <TextBlock Text="Number of days: "
                                DockPanel.Dock="Left"/>
-                    <TextBox Text="{Binding Seed, Mode=TwoWay}"
+                    <TextBox Text="{Binding NNN, Mode=TwoWay}"
                              DockPanel.Dock="Right"
                              />
                 </DockPanel>
@@ -90,12 +90,42 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+
             
-            <Button Content="Start simulation"
+            <!--<Button Content="{Binding SelectedItem, ElementName=treeView}"
                     Grid.Row="0"
-                    Command="{Binding StartSimulationCommand}"/>
+                    Command="{Binding StartSimulationCommand}"/>-->
+
+            <StackPanel Grid.Row="0">
+
+                <Button Content="Run"
+                    Grid.Row="0"
+                    Command="{Binding StartSimulationCommand}"
+                        IsEnabled="{Binding NotRunning}"/>
+                <DockPanel LastChildFill="True">
+
+                    <TextBlock DockPanel.Dock="Right">
+                        <Run Text="{Binding Percentage, FallbackValue=20.22, StringFormat=0.00}"/>
+                        <Run Text="%"/>
+                        <Run Text="Round:"/>
+                        <Run Text="{Binding Round, FallbackValue=2}"/>
+                        <Run Text="/"/>
+                        <Run Text="{Binding TotalRounds, FallbackValue=10}"/>
+                        <Run Text="Iteration:"/>
+                        <Run Text="{Binding Iteration, FallbackValue=2}"/>
+
+                    </TextBlock>
+                    
+                    <ProgressBar Minimum="0" 
+                                 Maximum="{Binding TotalRounds}"
+                                 Value="{Binding Round}"
+                                 Height="20"/>
+                </DockPanel>
+                
+            </StackPanel>
 
             <TreeView Grid.Row="1"
+                      x:Name="treeView"
                       ItemsSource="{Binding Report.Rounds}">
                 <TreeView.Resources>
                     <ResourceDictionary>

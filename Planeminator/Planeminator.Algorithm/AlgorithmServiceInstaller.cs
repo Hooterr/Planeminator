@@ -13,7 +13,6 @@ namespace Planeminator.Algorithm
         /// <param name="builder">The builder to add the dependencies to</param>
         public static void Install(ContainerBuilder builder)
         {
-            builder.RegisterType<SimulationBuilder>().As<ISimulationBuilder>();
             builder.RegisterType<ReportingService>().As<IReportingService>();
 
             builder.RegisterAutoMapper(typeof(AlgorithmServiceInstaller).Assembly);

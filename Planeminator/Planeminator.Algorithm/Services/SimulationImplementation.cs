@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using AutoMapper;
+using MathNet.Numerics.Distributions;
 using Planeminator.Algorithm.DataStructures;
 using Planeminator.Algorithm.Public;
 using Planeminator.Algorithm.Public.Reporting;
@@ -16,35 +17,29 @@ namespace Planeminator.Algorithm.Services
 {
     internal class SimulationImplementation : Simulation
     {
-        [Description("k")]
-        public const double FuelPricePerLiter = 5;
+        private readonly double FuelPricePerLiter;
+        private readonly int DurationInUnits;
 
         private readonly IAirportDistanceMap DistanceMap;
         private readonly List<AlgorithmAirport> Airports;
         private readonly List<AlgorithmPlane> Planes;
+        private readonly List<AlgorithmPackage> UndelieveredPackages = new List<AlgorithmPackage>();
         private readonly Random rng;
         private readonly IMapper mapper;
         private readonly IReportingService reporting;
+        private readonly IPackageGenerator packageGenerator;
+        private readonly ProgressHandler progress;
 
-        public SimulationImplementation(List<Airport> airports, List<Plane> planes, int seed) : this(airports, planes)
+        public SimulationImplementation(SimulationSettings settings, ProgressHandler handler)
         {
-            rng = new Random(seed);
-        }
-
-        public SimulationImplementation(List<Airport> airports, List<Plane> planes)
-        {
-            if (airports == null)
-                throw new ArgumentNullException(nameof(airports));
-
-            if (planes == null)
-                throw new ArgumentNullException(nameof(planes));
 
             using var scope = Framework.Container.BeginLifetimeScope();
             mapper = scope.Resolve<IMapper>();
             reporting = scope.Resolve<IReportingService>();
 
-            var algAirports = mapper.Map<List<AlgorithmAirport>>(airports);
-            var algPlanes = mapper.Map<List<AlgorithmPlane>>(planes);
+            progress = handler;
+            var algAirports = mapper.Map<List<AlgorithmAirport>>(settings.Airports);
+            var algPlanes = mapper.Map<List<AlgorithmPlane>>(settings.Planes);
 
             var idCurrent = 0;
             foreach (var airport in algAirports)
@@ -58,26 +53,30 @@ namespace Planeminator.Algorithm.Services
                 plane.InternalId = idCurrent++;
             }
 
+            rng = settings.Seed.HasValue ? new Random(settings.Seed.Value) : new Random();
             DistanceMap = AirportDistanceMap.FromAirports(algAirports);
             Airports = algAirports;
             Planes = algPlanes;
             reporting.WithAiports(Airports).WithPlanes(Planes).FinishInit();
-
-            rng ??= new Random();
+            packageGenerator = PackageGenerator.WithSettings(settings.PackageGeneration, rng);
+            DurationInUnits = settings.DurationInTimeUnits;
+            FuelPricePerLiter = settings.FuelPricePerLiter;
         }
 
+        private int CurrentTimeUnitNumber;
         public override async Task<bool> StartAsync()
         {
             await Task.Run(() =>
             {
-
                 try
                 {
-                    var CurrentTimeUnitNumber = 0;
+                    CurrentTimeUnitNumber = 0;
                     InitializeSimulation();
 
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < DurationInUnits; i++)
                     {
+                        progress(CurrentTimeUnitNumber + 1, 0);
+                        
                         // 1. Generate new packages
                         GenerateNewPackagesForAiports();
 
@@ -90,7 +89,10 @@ namespace Planeminator.Algorithm.Services
                         // 4. Fly plane to the next locations
                         FlyPlanes();
 
-                        // 5. Update the time unit
+                        // 5. Update Packages deadlines
+                        UpdateDeadlines();
+
+                        // 6. Update the time unit
                         CurrentTimeUnitNumber++;
                         reporting.NextRound();
                     }
@@ -106,15 +108,22 @@ namespace Planeminator.Algorithm.Services
             return true;
         }
 
+        private void UpdateDeadlines()
+        {
+            UndelieveredPackages.ForEach(pack => pack.DeadlineLeftTimeUnits--);
+        }
+
         private void OptimizeRoutes()
         {
             var gettingBetter = true;
 
             // Generate random routes
             GenerateRandomRoutesForAllPlanes();
-
+            var itn = 0;
             while (gettingBetter)
             {
+                progress(CurrentTimeUnitNumber + 1, itn + 1);
+
                 // Temporarily assign packages onto planes
                 TemporaryLoadPackagesOntoPlanes();
 
@@ -126,6 +135,8 @@ namespace Planeminator.Algorithm.Services
 
                 if (gettingBetter)
                     reporting.NextIteration();
+
+                itn++;
             }
         }
 
@@ -187,17 +198,23 @@ namespace Planeminator.Algorithm.Services
             {
                 airport.AvailablePlanes.ForEach(plane =>
                 {
-                    var undeliveredPackages = plane.Packages
-                        .Where(x => x.Destination != airport)
-                        .ToList();
+                    plane.Packages.ForEach(package =>
+                    {
+                        // Delievered
+                        if (package.Destination == airport)
+                        {
+                            // Remove it from delievered
+                            UndelieveredPackages.Remove(package);
+                        }
+                        // Undelievered
+                        else
+                        {
+                            // Add it to the airport pool
+                            airport.Packages.Add(package);
+                        }
+                    });
 
-                    airport.Packages.AddRange(undeliveredPackages);
-
-                    // For reporting later
-                    var delievered = plane.Packages
-                        .Except(undeliveredPackages)
-                        .ToList();
-
+                    // Unload everything from the plane
                     plane.Packages.Clear();
                 });
             });
@@ -266,27 +283,20 @@ namespace Planeminator.Algorithm.Services
         {
             foreach(var airport in Airports)
             {
-                var nrPckgs = rng.Next(1, 5);
-                var newPackages = new List<AlgorithmPackage>(nrPckgs);
-                for (var i = 0; i < nrPckgs; i++)
-                {
-                    var package = new AlgorithmPackage()
-                    {
-                        DeadlineInTimeUnits = rng.Next(2, 5),
-                        Income = rng.Next(1, 10),
-                        MassKg = rng.NextDouble() * 10d + 0.01d,
-                        Origin = airport,
-                    };
+                var newPackages = packageGenerator.NextPool();
 
-                    while(package.Destination == null || package.Destination == package.Origin)
+                foreach (var package in newPackages)
+                {
+                    package.Origin = airport;
+
+                    while (package.Destination == null || package.Destination == package.Origin)
                     {
                         package.Destination = GetRandomAirport();
                     }
-
-                    newPackages.Add(package);
                 }
 
                 airport.Packages.AddRange(newPackages);
+                UndelieveredPackages.AddRange(newPackages);
                 reporting.ReportNewPackagesAdded(newPackages);
             }
         }
