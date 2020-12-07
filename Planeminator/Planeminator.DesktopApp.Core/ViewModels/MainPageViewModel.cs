@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using AutoMapper;
 using Planeminator.Algorithm.Public;
+using Planeminator.Algorithm.Public.Reporting;
 using Planeminator.DataIO.Public.Models;
 using Planeminator.DataIO.Public.Services;
 using Planeminator.DesktopApp.Core.Models;
@@ -28,12 +29,17 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 
         public List<CheckableImportedAirport> Airports { get; set; }
 
+        public SimulationReport Report { get; set; }
+
+        #region Commands 
+
         public ICommand ImportAirportsCommand { get; set; }
 
         public ICommand SaveAirportsCommand { get; set; }
 
         public ICommand StartSimulationCommand { get; set; }
 
+        #endregion
 
         private readonly IFileDialogService mFileService;
         private readonly IAirportImportService mAirpotImporter;
@@ -120,7 +126,10 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 
             var simulation = builder.Build();
 
-            await simulation.StartAsync();
+            if (await simulation.StartAsync())
+            {
+                Report = simulation.GetReport();
+            }
         }
 
         private void SaveAirports()

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Planeminator.Algorithm.DataStructures;
 using Planeminator.Algorithm.Public.Reporting;
+using Planeminator.Domain.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace Planeminator.Algorithm.Services
         private IReadOnlyList<AlgorithmPlane> planes;
 
         private Dictionary<AlgorithmAirport, SimulationReportAirport> airportMapping;
-        //private Dictionary<AlgorithmPlane, SimulationReportRoundPlane> planeMapping;
+        private Dictionary<AlgorithmPackage, SimulationReportPackage> packageMapping;
 
         private int currentRoundNumber = 0;
         private int currentIterationNumber = 0;
@@ -70,9 +71,7 @@ namespace Planeminator.Algorithm.Services
 
             var reportAirports = mapper.Map<List<SimulationReportAirport>>(airports);
             airportMapping = new Dictionary<AlgorithmAirport, SimulationReportAirport>(airports.Zip(reportAirports, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v));
-
-            //var reportPlanes = mapper.Map<List<SimulationReportRoundPlane>>(planes);
-            //planeMapping = new Dictionary<AlgorithmPlane, SimulationReportRoundPlane>(planes.Zip(reportPlanes, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v));
+            packageMapping = new Dictionary<AlgorithmPackage, SimulationReportPackage>();
 
             initialized = true;
             return this;
@@ -105,7 +104,7 @@ namespace Planeminator.Algorithm.Services
             return this;
         }
 
-        public IReportingService Report(double objectiveFunctionValie)
+        public IReportingService ReportIterationFinish(double objectiveFunctionValie)
         {
             if (!initialized)
                 throw new InvalidOperationException(); 
@@ -114,10 +113,29 @@ namespace Planeminator.Algorithm.Services
             CurrentIteration.Planes = planes.Select(plane => new SimulationReportRoundPlane()
             {
                 UnderlyingPlane = plane,
-                Route = plane.Route.Select(algAiport => airportMapping[algAiport]).ToList()
+                Route = plane.Route.Select(algAiport => airportMapping[algAiport]).ToList(),
+                Packages = plane.Packages.Select(algPackage => packageMapping[algPackage]).ToList(),
             }).ToList();
             
             return this;
         }
+        public IReportingService ReportNewPackagesAdded(IEnumerable<AlgorithmPackage> packages)
+        {
+            packages.ForEach(algPackage =>
+            {
+                var repPackage = mapper.Map<SimulationReportPackage>(algPackage);
+                repPackage.Origin = airportMapping[algPackage.Origin];
+                repPackage.Destination = airportMapping[algPackage.Destination];
+                packageMapping[algPackage] = repPackage;
+            });
+
+            return this;
+        }
+
+        public SimulationReport Finish()
+        {
+            return report;
+        }
+
     }
 }

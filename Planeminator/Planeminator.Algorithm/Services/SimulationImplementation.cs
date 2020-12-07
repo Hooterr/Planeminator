@@ -2,6 +2,7 @@
 using AutoMapper;
 using Planeminator.Algorithm.DataStructures;
 using Planeminator.Algorithm.Public;
+using Planeminator.Algorithm.Public.Reporting;
 using Planeminator.Domain.DI;
 using Planeminator.Domain.Models;
 using System;
@@ -77,16 +78,19 @@ namespace Planeminator.Algorithm.Services
 
                     for (int i = 0; i < 10; i++)
                     {
-                        // 1. Unload packages from plane
+                        // 1. Generate new packages
+                        GenerateNewPackagesForAiports();
+
+                        // 2. Unload existing packages from plane
                         UnloadPackagesFromPlanes();
 
-                        // 2. IYKWIM
+                        // 3. IYKWIM
                         OptimizeRoutes();
 
-                        // 3. Fly plane to the next locations
+                        // 4. Fly plane to the next locations
                         FlyPlanes();
 
-                        // 4. Update the time unit
+                        // 5. Update the time unit
                         CurrentTimeUnitNumber++;
                         reporting.NextRound();
                     }
@@ -130,7 +134,7 @@ namespace Planeminator.Algorithm.Services
             // Sick algorithm goes here...
             var objFctnValue = CalculateObjectiveFunction();
 
-            reporting.Report(objFctnValue);
+            reporting.ReportIterationFinish(objFctnValue);
         }
 
         private void GenerateRandomRoutesForAllPlanes()
@@ -141,6 +145,7 @@ namespace Planeminator.Algorithm.Services
                                 .Range(0, AlgorithmPlane.RouteLength)
                                 .Select(x => GetRandomAirport())
                                 .ToList();
+
             });
         }
 
@@ -255,8 +260,6 @@ namespace Planeminator.Algorithm.Services
                 plane.CurrentAirport = airport;
 
             });
-
-            GenerateNewPackagesForAiports();
         }
 
         private void GenerateNewPackagesForAiports()
@@ -284,6 +287,7 @@ namespace Planeminator.Algorithm.Services
                 }
 
                 airport.Packages.AddRange(newPackages);
+                reporting.ReportNewPackagesAdded(newPackages);
             }
         }
 
@@ -299,6 +303,10 @@ namespace Planeminator.Algorithm.Services
             return Planes[rng.Next(0, Planes.Count - 1)];
         }
 
+        public override SimulationReport GetReport()
+        {
+            return reporting.Finish();
+        }
 
         #endregion
     }

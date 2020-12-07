@@ -1,4 +1,5 @@
 ﻿using Planeminator.Algorithm.DataStructures;
+using Planeminator.Algorithm.Public.Reporting;
 using Planeminator.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,10 @@ namespace Planeminator.Algorithm.Services
 
         IReportingService NextIteration();
 
-        IReportingService Report(double objectiveFunctionValie);
+        IReportingService ReportIterationFinish(double objectiveFunctionValie);
+
+        IReportingService ReportNewPackagesAdded(IEnumerable<AlgorithmPackage> packages);
+
+        SimulationReport Finish();
     }
 }

@@ -7,7 +7,7 @@ namespace Planeminator.Algorithm.Public.Reporting
 {
     public class SimulationReportRoundItem
     {
-        public readonly int RoundNumber;
+        public int RoundNumber { get; private set; }
 
         public List<SimulationReportRoundIterationItem> Iterations { get; set; }
 

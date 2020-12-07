@@ -5,11 +5,16 @@
                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                 xmlns:local="clr-namespace:Planeminator.DesktopApp.Pages"
-                xmlns:core="clr-namespace:Planeminator.DesktopApp.Core.ViewModels;assembly=Planeminator.DesktopApp.Core"
+                xmlns:core="clr-namespace:Planeminator.DesktopApp.Core.ViewModels;assembly=Planeminator.DesktopApp.Core" xmlns:datatemplateselectors="clr-namespace:Planeminator.DesktopApp.DataTemplateSelectors" xmlns:converters="clr-namespace:Planeminator.DesktopApp.Converters"
                 mc:Ignorable="d" 
                 d:DesignHeight="800" d:DesignWidth="1400"
                 d:Background="White"
                 Padding="10">
+    <local:BasePage.Resources>
+        <ResourceDictionary>
+            <datatemplateselectors:SimulationReportPlanePropsDataTemplateSelector x:Key="templateSelector"/>
+        </ResourceDictionary>
+    </local:BasePage.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MinWidth="100"/>
@@ -81,8 +86,72 @@
         <GridSplitter Grid.Column="1" Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Center" />
 
         <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
             <Button Content="Start simulation"
+                    Grid.Row="0"
                     Command="{Binding StartSimulationCommand}"/>
+
+            <TreeView Grid.Row="1"
+                      ItemsSource="{Binding Report.Rounds}">
+                <TreeView.Resources>
+                    <ResourceDictionary>
+                        <HierarchicalDataTemplate x:Key="routeTemplate" ItemsSource="{Binding}">
+                            <Label Content="Route"/>
+                            <HierarchicalDataTemplate.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding UnderlyingAirport.Name, Mode=OneWay}"/>
+                                </DataTemplate>
+                            </HierarchicalDataTemplate.ItemTemplate>
+                        </HierarchicalDataTemplate>
+
+                        <HierarchicalDataTemplate x:Key="packageTemplate" ItemsSource="{Binding}">
+                            <Label Content="Packages"/>
+                            <HierarchicalDataTemplate.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="Income:"/>
+                                        <Run Text="{Binding Income, Mode=OneWay}"/>
+                                        <Run Text="Mass[kg]:"/>
+                                        <Run Text="{Binding MassKg, Mode=OneWay, StringFormat=0.00}"/>
+                                        <Run Text="Deadline [time units]:"/>
+                                        <Run Text="{Binding DeadlineInTimeUnits, Mode=OneWay}"/>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </HierarchicalDataTemplate.ItemTemplate>
+                        </HierarchicalDataTemplate>
+                    </ResourceDictionary>
+                </TreeView.Resources>    
+                
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Iterations}">
+                        <TextBlock>
+                            <Run Text="Round"/>
+                            <Run Text="{Binding RoundNumber, Mode=OneWay}"/>
+                        </TextBlock>
+                        <HierarchicalDataTemplate.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Planes}">
+                                <TextBlock>
+                                    <Run Text="Iteration:"/>
+                                    <Run Text="{Binding Number, Mode=OneWay}"/>
+                                    <Run Text="ObjectiveFunction:"/>
+                                    <Run Text="{Binding ObjectiveFunctionValue, Mode=OneWay}"/>
+                                </TextBlock>
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <HierarchicalDataTemplate ItemsSource="{Binding AllDisplayableCollections}" 
+                                                              ItemTemplateSelector="{StaticResource templateSelector}">
+                                        <Label Content="{Binding UnderlyingPlane.Model, Mode=OneWay}"/>
+                                    </HierarchicalDataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </HierarchicalDataTemplate.ItemTemplate>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+                
+            </TreeView>
         </Grid>
 
     </Grid>

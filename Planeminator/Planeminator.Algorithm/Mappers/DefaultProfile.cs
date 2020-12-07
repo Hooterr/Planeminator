@@ -18,6 +18,10 @@ namespace Planeminator.Algorithm.Mappers
             CreateMap<AlgorithmAirport, SimulationReportAirport>()
                 .ForMember(dst => dst.UnderlyingAirport, opt => opt.MapFrom(src => src.AssociatedAirport));
 
+            CreateMap<AlgorithmPackage, SimulationReportPackage>()
+                .ForMember(dst => dst.Origin, opt => opt.Ignore())
+                .ForMember(dst => dst.Destination, opt => opt.Ignore());
+
             //CreateMap<AlgorithmPlane, SimulationReportRoundPlane>()
             //    .ForMember(dst => dst.UnderlyingPlane, opt => opt.MapFrom(src => src.AssociatedPlane))
             //    .ForMember(dst => dst.Route, opt => opt.Ignore());
