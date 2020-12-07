@@ -24,5 +24,20 @@ namespace Planeminator.Domain.Models
         /// <inheritdoc/>
         /// </summary>
         public Coordinate Coordinate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the city this airport is located in
+        /// </summary>
+        public string City { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the city this airpot is located in
+        /// </summary>
+        public string Country { get; set; }
+
+        /// <summary>
+        /// Gets or sets IATA code of this airport
+        /// </summary>
+        public string IATACode { get; set; }
     }
 }

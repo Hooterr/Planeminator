@@ -7,6 +7,7 @@ using Planeminator.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -31,6 +32,12 @@ namespace Planeminator.Algorithm.Services
 
         public SimulationImplementation(List<Airport> airports, List<Plane> planes)
         {
+            if (airports == null)
+                throw new ArgumentNullException(nameof(airports));
+
+            if (planes == null)
+                throw new ArgumentNullException(nameof(planes));
+
             using var scope = Framework.Container.BeginLifetimeScope();
             mapper = scope.Resolve<IMapper>();
             reporting = scope.Resolve<IReportingService>();
@@ -53,31 +60,40 @@ namespace Planeminator.Algorithm.Services
             DistanceMap = AirportDistanceMap.FromAirports(algAirports);
             Airports = algAirports;
             Planes = algPlanes;
-            reporting.WithAiports(Airports).WithPlanes(Planes);
+            reporting.WithAiports(Airports).WithPlanes(Planes).FinishInit();
 
             rng ??= new Random();
         }
 
-        public override async Task<bool> Start()
+        public override async Task<bool> StartAsync()
         {
             await Task.Run(() =>
             {
-                var CurrentTimeUnitNumber = 0;
-                InitializeSimulation();
 
-                for(int i = 0; i < 10; i++)
+                try
                 {
-                    // 1. Unload packages from plane
-                    UnloadPackagesFromPlanes();
+                    var CurrentTimeUnitNumber = 0;
+                    InitializeSimulation();
 
-                    // 2. IYKWIM
-                    OptimizeRoutes();
+                    for (int i = 0; i < 10; i++)
+                    {
+                        // 1. Unload packages from plane
+                        UnloadPackagesFromPlanes();
 
-                    // 3. Fly plane to the next locations
-                    FlyPlanes();
+                        // 2. IYKWIM
+                        OptimizeRoutes();
 
-                    // 4. Update the time unit
-                    CurrentTimeUnitNumber++;
+                        // 3. Fly plane to the next locations
+                        FlyPlanes();
+
+                        // 4. Update the time unit
+                        CurrentTimeUnitNumber++;
+                        reporting.NextRound();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debugger.Break();
                 }
 
                 return true;
@@ -101,9 +117,11 @@ namespace Planeminator.Algorithm.Services
                 // Do stuff...
                 OptimazeRoutesMutateGenesOrDoWhateverIDontCare();
 
-                
                 // Briliant stop condition goes here...
-                gettingBetter = false;
+                gettingBetter = rng.NextDouble() > 0.5;
+
+                if (gettingBetter)
+                    reporting.NextIteration();
             }
         }
 
@@ -111,8 +129,10 @@ namespace Planeminator.Algorithm.Services
         {
             // Sick algorithm goes here...
             var objFctnValue = CalculateObjectiveFunction();
+
+            reporting.Report(objFctnValue);
         }
-        
+
         private void GenerateRandomRoutesForAllPlanes()
         {
             Planes.ForEach(plane =>

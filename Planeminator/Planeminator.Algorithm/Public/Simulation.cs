@@ -7,7 +7,7 @@ namespace Planeminator.Algorithm.Public
 {
     public abstract class Simulation
     {
-        public abstract Task<bool> Start();
+        public abstract Task<bool> StartAsync();
 
         protected Simulation() { }
     }
