@@ -29,8 +29,9 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0">
+                
+                <!-- Seed -->
                 <DockPanel>
-                    <!-- Seed -->
                     <TextBlock Text="Seed: "
                                DockPanel.Dock="Left"/>
                     <TextBox Text="{Binding Seed, Mode=TwoWay}"
@@ -38,11 +39,21 @@
                              />
                 </DockPanel>
 
-                <!-- Fule price -->
+                <!-- Fuel price -->
                 <DockPanel Margin="0 5">
                     <TextBlock Text="Fuel price per liter: "
                                DockPanel.Dock="Left"/>
                     <TextBox Text="{Binding FuelPrice, Mode=TwoWay}"
+                             DockPanel.Dock="Right"
+                             />
+                </DockPanel>
+
+
+                <!-- Mileage price -->
+                <DockPanel Margin="0 5">
+                    <TextBlock Text="Liters of fuel per 1kg per 100km: "
+                               DockPanel.Dock="Left"/>
+                    <TextBox Text="{Binding Mileage, Mode=TwoWay}"
                              DockPanel.Dock="Right"
                              />
                 </DockPanel>

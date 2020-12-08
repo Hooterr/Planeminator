@@ -19,6 +19,7 @@ namespace Planeminator.Algorithm.Services
     {
         private readonly double FuelPricePerLiter;
         private readonly int DurationInUnits;
+        private readonly double PenaltyPerDayPercentage = 5;
 
         private readonly IAirportDistanceMap DistanceMap;
         private readonly List<AlgorithmAirport> Airports;
@@ -125,7 +126,7 @@ namespace Planeminator.Algorithm.Services
                 progress(CurrentTimeUnitNumber + 1, itn + 1);
 
                 // Reload packages onto planes <---- this one takes the most time
-                LoadPackgesOntoPlanesFinal();
+                ReloadPackagesOntoPlanes();
 
                 // Do stuff...
                 OptimazeRoutesMutateGenesOrDoWhateverIDontCare();
@@ -138,6 +139,12 @@ namespace Planeminator.Algorithm.Services
 
                 itn++;
             }
+
+            // Remove packages taken by the planes from that airport
+            Airports.ForEach(airport =>
+            {
+                airport.AvailablePlanes.SelectMany(x => x.Packages).ToList().ForEach(package => airport.Packages.Remove(package));
+            });
         }
 
         private void OptimazeRoutesMutateGenesOrDoWhateverIDontCare()
@@ -180,16 +187,30 @@ namespace Planeminator.Algorithm.Services
 
         private double CalculateObjectiveFunction()
         {
-            return Planes.Sum(plane => 
-                plane.Route.Sum(routeItem => 
-                    -GetFlightCost(plane, routeItem) + plane.Packages.Sum(package =>  /* TBD Start */package.Destination == routeItem ? package.Income : 0 - 0  /* TBD End */)));
+            var objFcnValue = 0d;
+
+            foreach(var plane in Planes)
+            {
+                var currentPlaneMass = plane.Packages.Sum(x => x.MassKg);
+                var currentRouteItem = plane.CurrentAirport;
+                for (int t = 0; t < plane.Route.Count(); t++)
+                {
+                    var nextRouteItem = plane.Route[t];
+                    var packagesDelieveredThisRouteItem = plane.Packages.Where(package => plane.Route.IndexOf(package.Destination) == t).ToList();
+                    objFcnValue += -plane.Mileague.CalculateMailage(currentPlaneMass) * FuelPricePerLiter * DistanceMap.GetDistance(currentRouteItem, nextRouteItem);
+                    objFcnValue += packagesDelieveredThisRouteItem.Sum(package => package.Income * PenaltyFactor(package, plane.Route.IndexOf(package.Destination) + 1));
+                    currentPlaneMass -= packagesDelieveredThisRouteItem.Sum(x => x.MassKg);
+                    currentRouteItem = nextRouteItem;
+                }
+
+            }
+
+            return objFcnValue;
         }
 
-
-        private double GetFlightCost(AlgorithmPlane plane, AlgorithmAirport destination)
+        private double PenaltyFactor(AlgorithmPackage package, int delieverdIn)
         {
-            //                                           Improve complexity by caching total package weight
-            return plane.Mileague.CalculateMailage(plane.Packages.Sum(package => package.MassKg)) * FuelPricePerLiter * DistanceMap.GetDistance(plane.CurrentAirport, destination);
+            return Math.Min(1, 1 - ((delieverdIn - package.DeadlineLeftTimeUnits) * PenaltyPerDayPercentage / 100d));
         }
 
         private void UnloadPackagesFromPlanes()
@@ -250,7 +271,6 @@ namespace Planeminator.Algorithm.Services
         /// </summary>
         private void LoadPackgesOntoPlanesFinal()
         {
-            // And assign them again
             Airports.ForEach(airport =>
             {
                 airport.Packages.ForEach(package =>
@@ -260,9 +280,6 @@ namespace Planeminator.Algorithm.Services
                     if (planeToLoadThePackageOnto != null)
                     {
                         planeToLoadThePackageOnto.Packages.Add(package);
-
-                        // If uncommented throws CollectionModifiedException
-                        //airport.Packages.Remove(package);
                     }
                 });
                 airport.AvailablePlanes.SelectMany(x => x.Packages).ToList().ForEach(package => airport.Packages.Remove(package));

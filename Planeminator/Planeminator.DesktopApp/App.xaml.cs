@@ -31,6 +31,7 @@ namespace Planeminator.DesktopApp
                 builder.RegisterInstance(ApplicationViewModel.Instance).ExternallyOwned().SingleInstance();
                 builder.RegisterType<MainPageViewModel>().AsSelf();
                 builder.RegisterType<FileDialogService>().As<IFileDialogService>();
+                builder.RegisterType<UIManager>().As<IUIManager>();
 
                 DataIOServiceInstaller.Install(builder);
                 AlgorithmServiceInstaller.Install(builder);

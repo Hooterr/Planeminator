@@ -13,7 +13,7 @@ namespace Planeminator.Algorithm.Public
 
         public int? Seed { get; set; }
 
-        public int FuelPricePerLiter { get; set; }
+        public double FuelPricePerLiter { get; set; }
 
         public int DurationInTimeUnits { get; set; }
 

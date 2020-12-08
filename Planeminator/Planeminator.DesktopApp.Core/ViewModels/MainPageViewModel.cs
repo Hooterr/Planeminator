@@ -43,7 +43,7 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 
         public bool NotRunning => !Running;
 
-        public string FuelPrice { get; set; } = "30";
+        public string FuelPrice { get; set; } = "0.1";
 
         public string NumberOfRounds { get; set; } = "30";
 
@@ -65,6 +65,8 @@ namespace Planeminator.DesktopApp.Core.ViewModels
         public string PackageCountMean { get; set; } = "10";
         public string PackageCountStd { get; set; } = "5";
         public string PackageCountMin { get; set; } = "0.001";
+
+        public string Mileage { get; set; } = "2.45";
         #region Commands 
 
         public ICommand ImportAirportsCommand { get; set; }
@@ -78,17 +80,19 @@ namespace Planeminator.DesktopApp.Core.ViewModels
         private readonly IFileDialogService mFileService;
         private readonly IAirportImportService mAirpotImporter;
         private readonly IMapper mMapper;
+        private readonly IUIManager mUI;
 
         public MainPageViewModel()
         {
 
         }
 
-        public MainPageViewModel(IFileDialogService fileService, IAirportImportService airpotImporter, IMapper mapper)
+        public MainPageViewModel(IFileDialogService fileService, IAirportImportService airpotImporter, IMapper mapper, IUIManager UI)
         {
             mFileService = fileService;
             mAirpotImporter = airpotImporter;
             mMapper = mapper;
+            mUI = UI;
             ImportAirportsCommand = new RelayCommand(ImportAirports);
             SaveAirportsCommand = new RelayCommand(SaveAirports);
             StartSimulationCommand = new RelayCommand(StartSimulation);
@@ -100,64 +104,67 @@ namespace Planeminator.DesktopApp.Core.ViewModels
             {
                 var airports = mMapper.Map<List<Airport>>(Airports);
                 var builder = SimulationBuilder.New();
+                var mileague = double.Parse(Mileage);
+                var b = 1.5;
+                var a = mileague / 100;
                 builder.Settings = new SimulationSettings()
                 {
                     Planes = new List<Plane>()
-                {
-                    new Plane()
                     {
-                        Model = "Antonov 1",
-                        Mileague = new LinearMileageFunction(20, 10),
+                        new Plane()
+                        {
+                            Model = "Antonov 1",
+                            Mileague = new LinearMileageFunction(a, b),
+                        },
+                        new Plane()
+                        {
+                            Model = "Antonov 2",
+                            Mileague = new LinearMileageFunction(a, b),
+                        },
+                        new Plane()
+                        {
+                            Model = "Antonov 3",
+                            Mileague = new LinearMileageFunction(a, b),
+                        },
+                        new Plane()
+                        {
+                            Model = "Antonov 4",
+                            Mileague = new LinearMileageFunction(a, b),
+                        },
+                        new Plane()
+                        {
+                            Model = "Antonov 5",
+                            Mileague = new LinearMileageFunction(a, b),
+                        },
+                        new Plane()
+                        {
+                            Model = "Antonov 6",
+                            Mileague = new LinearMileageFunction(a, b),
+                        },
+                        new Plane()
+                        {
+                            Model = "Antonov 7",
+                            Mileague = new LinearMileageFunction(a, b),
+                        },
+                        new Plane()
+                        {
+                            Model = "Antonov 8",
+                            Mileague = new LinearMileageFunction(a, b),
+                        },
+                        new Plane()
+                        {
+                            Model = "Antonov 9",
+                            Mileague = new LinearMileageFunction(a, b),
+                        },
+                        new Plane()
+                        {
+                            Model = "Antonov 10",
+                            Mileague = new LinearMileageFunction(a, b)
+                        },
                     },
-                    new Plane()
-                    {
-                        Model = "Antonov 2",
-                        Mileague = new LinearMileageFunction(18, 5),
-                    },
-                    new Plane()
-                    {
-                        Model = "Antonov 3",
-                        Mileague = new LinearMileageFunction(22, 4),
-                    },
-                    new Plane()
-                    {
-                        Model = "Antonov 4",
-                        Mileague = new LinearMileageFunction(11, 4),
-                    },
-                    new Plane()
-                    {
-                        Model = "Antonov 5",
-                        Mileague = new LinearMileageFunction(33, 2),
-                    },
-                    new Plane()
-                    {
-                        Model = "Antonov 6",
-                        Mileague = new LinearMileageFunction(20, 10),
-                    },
-                    new Plane()
-                    {
-                        Model = "Antonov 7",
-                        Mileague = new QuadraticMileageFunction(10, 10, 10),
-                    },
-                    new Plane()
-                    {
-                        Model = "Antonov 8",
-                        Mileague = new QuadraticMileageFunction(20, 10, 20),
-                    },
-                    new Plane()
-                    {
-                        Model = "Antonov 9",
-                        Mileague = new QuadraticMileageFunction(5, 5, 20),
-                    },
-                    new Plane()
-                    {
-                        Model = "Antonov 10",
-                        Mileague = new QuadraticMileageFunction(7, 15, 14),
-                    },
-                },
                     Airports = airports,
                     DurationInTimeUnits = int.Parse(NumberOfRounds),
-                    FuelPricePerLiter = int.Parse(FuelPrice),
+                    FuelPricePerLiter = double.Parse(FuelPrice),
                     PackageGeneration = new PackageGenerationSettings()
                     {
                         CountDistribution = new AlgorithmNormalDistributionParameters()
@@ -204,6 +211,7 @@ namespace Planeminator.DesktopApp.Core.ViewModels
             }
             catch (Exception ex)
             {
+                mUI.ShowInfo(ex.ToString(), "Error");
                 Debugger.Break();
             }
         }
