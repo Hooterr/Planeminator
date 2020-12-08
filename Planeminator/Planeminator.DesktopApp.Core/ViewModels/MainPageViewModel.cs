@@ -67,6 +67,9 @@ namespace Planeminator.DesktopApp.Core.ViewModels
         public string PackageCountMin { get; set; } = "0.001";
 
         public string Mileage { get; set; } = "2.45";
+
+        public string Penalty { get; set; } = "5";
+
         #region Commands 
 
         public ICommand ImportAirportsCommand { get; set; }
@@ -199,6 +202,8 @@ namespace Planeminator.DesktopApp.Core.ViewModels
                     builder.Settings.Seed = seedInt;
                 else
                     builder.Settings.Seed = null;
+
+                builder.Settings.PenaltyPercent = double.Parse(Penalty);
 
                 builder.ProgressHandler = UpdateProgress;
 

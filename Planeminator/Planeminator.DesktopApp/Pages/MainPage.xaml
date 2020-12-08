@@ -48,7 +48,6 @@
                              />
                 </DockPanel>
 
-
                 <!-- Mileage price -->
                 <DockPanel Margin="0 5">
                     <TextBlock Text="Liters of fuel per 1kg per 100km: "
@@ -67,6 +66,15 @@
                              />
                 </DockPanel>
 
+                <!-- Penalty -->
+                <DockPanel Margin="0 5">
+                    <TextBlock Text="Penalty % per time unit: "
+                               DockPanel.Dock="Left"/>
+                    <TextBox Text="{Binding Penalty, Mode=TwoWay}"
+                             DockPanel.Dock="Right"
+                             />
+                </DockPanel>
+                
                 <!-- Mass of packages distribution -->
                 <DockPanel Margin="0 5"
                            LastChildFill="True">
@@ -264,7 +272,7 @@
                                 <DataTemplate>
                                     <TextBlock>
                                         <Run Text="Income:"/>
-                                        <Run Text="{Binding Income, Mode=OneWay}"/>
+                                        <Run Text="{Binding Income, Mode=OneWay, StringFormat=0.00}"/>
                                         <Run Text="Mass[kg]:"/>
                                         <Run Text="{Binding MassKg, Mode=OneWay, StringFormat=0.00}"/>
                                         <Run Text="Deadline [time units]:"/>

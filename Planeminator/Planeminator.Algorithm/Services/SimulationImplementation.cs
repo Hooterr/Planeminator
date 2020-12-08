@@ -19,7 +19,7 @@ namespace Planeminator.Algorithm.Services
     {
         private readonly double FuelPricePerLiter;
         private readonly int DurationInUnits;
-        private readonly double PenaltyPerDayPercentage = 5;
+        private readonly double PenaltyPerDayPercentage;
 
         private readonly IAirportDistanceMap DistanceMap;
         private readonly List<AlgorithmAirport> Airports;
@@ -62,6 +62,11 @@ namespace Planeminator.Algorithm.Services
             packageGenerator = PackageGenerator.WithSettings(settings.PackageGeneration, rng);
             DurationInUnits = settings.DurationInTimeUnits;
             FuelPricePerLiter = settings.FuelPricePerLiter;
+
+            if (settings.PenaltyPercent <= 0)
+                throw new ArgumentException(nameof(settings.PenaltyPercent));
+
+            PenaltyPerDayPercentage = settings.PenaltyPercent;
         }
 
         private int CurrentTimeUnitNumber;
@@ -117,19 +122,19 @@ namespace Planeminator.Algorithm.Services
         private void OptimizeRoutes()
         {
             var gettingBetter = true;
-
-            // Generate random routes
-            GenerateRandomRoutesForAllPlanes();
             var itn = 0;
             while (gettingBetter)
             {
                 progress(CurrentTimeUnitNumber + 1, itn + 1);
 
+                // Generate random routes
+                GenerateRandomRoutesForAllPlanes();
+
                 // Reload packages onto planes <---- this one takes the most time
                 ReloadPackagesOntoPlanes();
 
                 // Do stuff...
-                OptimazeRoutesMutateGenesOrDoWhateverIDontCare();
+                StateOfTheArtOptimizationMethod();
 
                 // Briliant stop condition goes here...
                 gettingBetter = rng.NextDouble() > 0.5;
@@ -147,7 +152,7 @@ namespace Planeminator.Algorithm.Services
             });
         }
 
-        private void OptimazeRoutesMutateGenesOrDoWhateverIDontCare()
+        private void StateOfTheArtOptimizationMethod()
         {
             // Sick algorithm goes here...
             var objFctnValue = CalculateObjectiveFunction();
@@ -290,14 +295,8 @@ namespace Planeminator.Algorithm.Services
         {
             var planeToLoadThePackageOnto =
                 availablePlanes
-                .Select(plane => new
-                {
-                    plane,
-                    distanceToDestinationInRoute = plane.Route.IndexOf(package.Destination),
-                })
-                .Where(x => x.distanceToDestinationInRoute != -1)
-                .OrderBy(x => x.distanceToDestinationInRoute)
-                .Select(x => x.plane)
+                .Where(plane => plane.Route.Contains(package.Destination))
+                .OrderBy(plane => plane.Route.IndexOf(package.Destination))
                 .FirstOrDefault();
 
             return planeToLoadThePackageOnto;

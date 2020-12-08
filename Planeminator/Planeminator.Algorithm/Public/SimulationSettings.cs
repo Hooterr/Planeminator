@@ -17,6 +17,8 @@ namespace Planeminator.Algorithm.Public
 
         public int DurationInTimeUnits { get; set; }
 
+        public double PenaltyPercent { get; set; }
+
         public PackageGenerationSettings PackageGeneration { get; set; }
 
     }
