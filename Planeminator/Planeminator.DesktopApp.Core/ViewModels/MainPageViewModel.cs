@@ -156,8 +156,8 @@ namespace Planeminator.DesktopApp.Core.ViewModels
                     },
                 },
                     Airports = airports,
-                    DurationInTimeUnits = TotalRounds,
-                    FuelPricePerLiter = 30,
+                    DurationInTimeUnits = int.Parse(NumberOfRounds),
+                    FuelPricePerLiter = int.Parse(FuelPrice),
                     PackageGeneration = new PackageGenerationSettings()
                     {
                         CountDistribution = new AlgorithmNormalDistributionParameters()
@@ -186,6 +186,7 @@ namespace Planeminator.DesktopApp.Core.ViewModels
                         }
                     }
                 };
+                TotalRounds = int.Parse(NumberOfRounds);
 
                 if (int.TryParse(Seed, out var seedInt))
                     builder.Settings.Seed = seedInt;
