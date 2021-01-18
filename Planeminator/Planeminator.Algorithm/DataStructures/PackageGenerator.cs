@@ -35,7 +35,7 @@ namespace Planeminator.Algorithm.DataStructures
                     Income = IncomeProvider.Next(),
                     DeadlineInTimeUnits = (int)DeadlineProvider.Next(),
                 };
-                package.DeadlineLeftTimeUnits = package.DeadlineInTimeUnits;
+
                 poolSize--;
                 result.Add(package);
             }

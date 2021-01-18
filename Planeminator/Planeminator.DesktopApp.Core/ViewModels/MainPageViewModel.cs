@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using AutoMapper;
+using OfficeOpenXml;
 using Planeminator.Algorithm.Public;
 using Planeminator.Algorithm.Public.Reporting;
 using Planeminator.DataIO.Public.Models;
@@ -10,9 +11,11 @@ using Planeminator.DesktopApp.Core.ViewModels.Base;
 using Planeminator.Domain.DI;
 using Planeminator.Domain.Functions;
 using Planeminator.Domain.Models;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
@@ -21,7 +24,7 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 {
     public class MainPageViewModel : BaseViewModel
     {
-        public string Seed { get; set; } = 123456.ToString();
+        public string Seed { get; set; } = "123456";
 
         public string AirportsPath { get; set; }
 
@@ -31,21 +34,18 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 
         public SimulationReport Report { get; set; }
 
-        public int TotalRounds { get; set; } = 30;
-
         public int Iteration { get; set; }
 
-        public int Round { get; set; }
-
-        public double Percentage { get; set; }
+        [DependsOn(nameof(Iteration), nameof(IterationsTotal))]
+        public double Percentage => 100 * (double)Iteration / (IterationsTotal == 0 ? 1 : IterationsTotal);
 
         public bool Running { get; set; }
 
         public bool NotRunning => !Running;
 
         public string FuelPrice { get; set; } = "0.1";
-
-        public string NumberOfRounds { get; set; } = "30";
+        public int IterationsTotal { get; set; }
+        public string NumberOfIterations { get; set; } = "15";
 
         public string PackageMassMean { get; set; } = "10";
         public string PackageMassStd { get; set; } = "5";
@@ -70,6 +70,9 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 
         public string Penalty { get; set; } = "5";
 
+        public string NumberOfGenerations { get; set; } = "200";
+        public string MutationProbability { get; set; } = "0.001";
+
         #region Commands 
 
         public ICommand ImportAirportsCommand { get; set; }
@@ -77,6 +80,8 @@ namespace Planeminator.DesktopApp.Core.ViewModels
         public ICommand SaveAirportsCommand { get; set; }
 
         public ICommand StartSimulationCommand { get; set; }
+
+        public ICommand ExportExcelCommand { get; set; }
 
         #endregion
 
@@ -99,6 +104,7 @@ namespace Planeminator.DesktopApp.Core.ViewModels
             ImportAirportsCommand = new RelayCommand(ImportAirports);
             SaveAirportsCommand = new RelayCommand(SaveAirports);
             StartSimulationCommand = new RelayCommand(StartSimulation);
+            ExportExcelCommand = new RelayCommand(ExportExcel);
         }
 
         private async void StartSimulation()
@@ -166,7 +172,7 @@ namespace Planeminator.DesktopApp.Core.ViewModels
                         },
                     },
                     Airports = airports,
-                    DurationInTimeUnits = int.Parse(NumberOfRounds),
+                    DurationInTimeUnits = int.Parse(NumberOfIterations),
                     FuelPricePerLiter = double.Parse(FuelPrice),
                     PackageGeneration = new PackageGenerationSettings()
                     {
@@ -196,7 +202,6 @@ namespace Planeminator.DesktopApp.Core.ViewModels
                         }
                     }
                 };
-                TotalRounds = int.Parse(NumberOfRounds);
 
                 if (int.TryParse(Seed, out var seedInt))
                     builder.Settings.Seed = seedInt;
@@ -204,6 +209,10 @@ namespace Planeminator.DesktopApp.Core.ViewModels
                     builder.Settings.Seed = null;
 
                 builder.Settings.PenaltyPercent = double.Parse(Penalty);
+                builder.Settings.NumberOfIterations = int.Parse(NumberOfIterations);
+                builder.Settings.MutationProbability = double.Parse(MutationProbability);
+                builder.Settings.GenerationSize = int.Parse(NumberOfGenerations);
+                IterationsTotal = builder.Settings.NumberOfIterations;
 
                 builder.ProgressHandler = UpdateProgress;
 
@@ -221,11 +230,9 @@ namespace Planeminator.DesktopApp.Core.ViewModels
             }
         }
 
-        private void UpdateProgress(int round, int interation)
+        private void UpdateProgress(int interation)
         {
-            Percentage = (double)round / TotalRounds * 100;
             Iteration = interation;
-            Round = round;
         }
 
         private void SaveAirports()
@@ -250,6 +257,61 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 
             AirportsPath = file;
             Airports = mMapper.Map<List<CheckableImportedAirport>>(mAirpotImporter.ImportAirportsFromJson(file));
+        }
+
+        private void ExportExcel()
+        {
+            if (Report == null)
+                return;
+            try
+            {
+                using ExcelPackage excel = new ExcelPackage();
+                excel.Workbook.Worksheets.Add("data");
+
+                var outputFileName = mFileService.SaveToFile("Excel file (*.xlsx) | *.xlsx");
+
+                if (string.IsNullOrEmpty(outputFileName))
+                    return;
+
+                var genCount = Report.Iterations.Select(x => x.GenerationsCount).Max();
+
+                string[] row1 = new List<string>(){ "Iteration\\Generation" }.Concat(Enumerable.Range(1, genCount).Select(x => x.ToString())).ToArray();
+                List<string[]> headerRow = Enumerable.Range(1, Report.Iterations.Count).Select(x => new string[] { x.ToString() }).ToList();
+                headerRow = headerRow.Prepend(row1).ToList();
+
+                // Determine the header range
+                string headerRange = "A1:" + GetExcelColumnName(headerRow[0].Length) + "1";
+                string rowRange = "A1:" + GetExcelColumnName(headerRow[0].Length) + "1";
+
+                // Target a worksheet
+                var worksheet = excel.Workbook.Worksheets["data"];
+
+                // Popular header row data
+                worksheet.Cells[headerRange].LoadFromArrays(headerRow);
+                worksheet.Cells[2, 2].LoadFromArrays(Report.Iterations.Select(x => x.Generations.Select(x => (object)x.ObjectiveFunctionValue).ToArray()));
+                FileInfo excelFile = new FileInfo(outputFileName);
+                excel.SaveAs(excelFile);
+            }
+            catch (Exception ex)
+            {
+                mUI.ShowInfo(ex.ToString(), "Error");
+            }
+        }
+
+        private string GetExcelColumnName(int columnNumber)
+        {
+            int dividend = columnNumber;
+            string columnName = String.Empty;
+            int modulo;
+
+            while (dividend > 0)
+            {
+                modulo = (dividend - 1) % 26;
+                columnName = Convert.ToChar(65 + modulo).ToString() + columnName;
+                dividend = (int)((dividend - modulo) / 26);
+            }
+
+            return columnName;
         }
     }
 }

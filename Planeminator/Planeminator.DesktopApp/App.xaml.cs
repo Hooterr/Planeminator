@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using AutoMapper.Contrib.Autofac.DependencyInjection;
+using OfficeOpenXml;
 using Planeminator.Algorithm;
 using Planeminator.DataIO;
 using Planeminator.DesktopApp.Core;
@@ -37,6 +38,7 @@ namespace Planeminator.DesktopApp
                 AlgorithmServiceInstaller.Install(builder);
                 CoreServicesInstaller.Install(builder);
             });
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             base.OnStartup(e);
         }

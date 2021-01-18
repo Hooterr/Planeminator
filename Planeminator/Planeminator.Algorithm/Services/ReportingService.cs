@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Planeminator.Algorithm.DataStructures;
+using Planeminator.Algorithm.DataStructures.Genetic;
 using Planeminator.Algorithm.Public.Reporting;
 using Planeminator.Domain.Extensions;
 using System;
@@ -19,32 +20,27 @@ namespace Planeminator.Algorithm.Services
         private Dictionary<AlgorithmAirport, SimulationReportAirport> airportMapping;
         private Dictionary<AlgorithmPackage, SimulationReportPackage> packageMapping;
 
-        private int currentRoundNumber = 0;
         private int currentIterationNumber = 0;
+        private int currentPopulationNumber = -1;
 
         private readonly SimulationReport report;
 
-        private SimulationReportRoundItem CurrentRound => report.Rounds.ElementAtOrDefault(currentRoundNumber);
-
-        private SimulationReportRoundIterationItem CurrentIteration => CurrentRound?.Iterations.ElementAtOrDefault(currentIterationNumber);
+        private SimulationReportRoundIterationItem CurrentIteration => report.Iterations.ElementAtOrDefault(currentIterationNumber);
+        private SimulationReportPopulationItem CurrentPopulation => CurrentIteration.Generations.ElementAt(currentPopulationNumber);
 
         public ReportingService(IMapper mapper)
         {
             this.mapper = mapper;
             report = new SimulationReport()
             {
-                Rounds = new List<SimulationReportRoundItem>()
+                Iterations = new List<SimulationReportRoundIterationItem>()
                 {
-                    new SimulationReportRoundItem(currentRoundNumber)
-                    {
-                        Iterations = new List<SimulationReportRoundIterationItem>()
-                        {
-                            new SimulationReportRoundIterationItem(currentIterationNumber)
-                        }
-                    }
+                    new SimulationReportRoundIterationItem(currentIterationNumber)
                 }
             };
         }
+
+        #region Init
 
         public IReportingService WithAiports(IReadOnlyList<AlgorithmAirport> airports)
         {
@@ -77,22 +73,7 @@ namespace Planeminator.Algorithm.Services
             return this;
         }
 
-        public IReportingService NextRound()
-        {
-            if (!initialized)
-                throw new InvalidOperationException();
-
-            currentRoundNumber++;
-            currentIterationNumber = 0;
-            report.Rounds.Add(new SimulationReportRoundItem(currentRoundNumber)
-            {
-                Iterations = new List<SimulationReportRoundIterationItem>()
-                {
-                    new SimulationReportRoundIterationItem(currentIterationNumber)
-                }
-            });
-            return this;
-        }
+        #endregion
 
         public IReportingService NextIteration()
         {
@@ -100,25 +81,47 @@ namespace Planeminator.Algorithm.Services
                 throw new InvalidOperationException(); 
             
             currentIterationNumber++;
-            CurrentRound.Iterations.Add(new SimulationReportRoundIterationItem(currentIterationNumber));
+            report.Iterations.Add(new SimulationReportRoundIterationItem(currentIterationNumber));
             return this;
         }
 
-        public IReportingService ReportIterationFinish(double objectiveFunctionValie)
+        public IReportingService NextPopulation(Population population)
         {
             if (!initialized)
-                throw new InvalidOperationException(); 
-            
-            CurrentIteration.ObjectiveFunctionValue = objectiveFunctionValie;
-            CurrentIteration.Planes = planes.Select(plane => new SimulationReportRoundPlane()
+                throw new InvalidOperationException();
+
+            CurrentIteration.Generations.Add(new SimulationReportPopulationItem()
             {
-                UnderlyingPlane = plane,
-                Route = plane.Route.Select(algAiport => airportMapping[algAiport]).ToList(),
-                Packages = plane.Packages.Select(algPackage => packageMapping[algPackage]).ToList(),
-            }).ToList();
+                ObjectiveFunctionValue = population.ObjectiveFunctionValue,
+                Planes = population.Elements.Select(element => new SimulationReportIterationPlane()
+                {
+                    UnderlyingPlane = element.Plane,
+                    Route = element.Route.Select(algAiport => airportMapping[algAiport]).ToList(),
+                    Packages = element.Plane.Packages.Select(algPackage => packageMapping[algPackage]).ToList(),
+                }).ToList(),
+            });
             
+            currentPopulationNumber++;
+
             return this;
         }
+         
+        public IReportingService FinalSolution(Population final)
+        {
+            report.FinalSolution = new SimulationReportPopulationItem()
+            {
+                ObjectiveFunctionValue = final.ObjectiveFunctionValue,
+                Planes = final.Elements.Select(element => new SimulationReportIterationPlane()
+                {
+                    UnderlyingPlane = element.Plane,
+                    Route = element.Route.Select(algAiport => airportMapping[algAiport]).ToList(),
+                    Packages = element.Plane.Packages.Select(algPackage => packageMapping[algPackage]).ToList(),
+                }).ToList(),
+            };
+
+            return this;
+        }
+
         public IReportingService ReportNewPackagesAdded(IEnumerable<AlgorithmPackage> packages)
         {
             packages.ForEach(algPackage =>

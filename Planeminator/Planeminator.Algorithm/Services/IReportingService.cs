@@ -1,4 +1,5 @@
 ﻿using Planeminator.Algorithm.DataStructures;
+using Planeminator.Algorithm.DataStructures.Genetic;
 using Planeminator.Algorithm.Public.Reporting;
 using Planeminator.Domain.Models;
 using System;
@@ -15,13 +16,13 @@ namespace Planeminator.Algorithm.Services
 
         IReportingService FinishInit();
 
-        IReportingService NextRound();
-
         IReportingService NextIteration();
 
-        IReportingService ReportIterationFinish(double objectiveFunctionValie);
-
         IReportingService ReportNewPackagesAdded(IEnumerable<AlgorithmPackage> packages);
+
+        IReportingService NextPopulation(Population population);
+
+        IReportingService FinalSolution(Population final);
 
         SimulationReport Finish();
     }

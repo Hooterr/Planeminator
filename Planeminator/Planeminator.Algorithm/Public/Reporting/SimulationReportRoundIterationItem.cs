@@ -8,13 +8,14 @@ namespace Planeminator.Algorithm.Public.Reporting
     {
         public int Number { get; private set; }
 
-        public double ObjectiveFunctionValue { get; set; }
+        public List<SimulationReportPopulationItem> Generations { get; set; }
 
-        public List<SimulationReportRoundPlane> Planes { get; set; }
+        public int GenerationsCount => Generations?.Count ?? 0;
 
         public SimulationReportRoundIterationItem(int number)
         {
             Number = number;
+            Generations = new List<SimulationReportPopulationItem>();
         }
     }
 }

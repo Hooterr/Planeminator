@@ -24,154 +24,164 @@
 
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0">
-                
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+
                 <!-- Seed -->
-                <DockPanel>
-                    <TextBlock Text="Seed: "
-                               DockPanel.Dock="Left"/>
-                    <TextBox Text="{Binding Seed, Mode=TwoWay}"
-                             DockPanel.Dock="Right"
-                             />
-                </DockPanel>
+                <TextBlock Text="Seed: "
+                            DockPanel.Dock="Left"
+                            Grid.Row="0" Grid.Column="0"/>
+                <TextBox Text="{Binding Seed, Mode=TwoWay}"
+                            Grid.Row="0" Grid.Column="1"
+                        />
 
                 <!-- Fuel price -->
-                <DockPanel Margin="0 5">
-                    <TextBlock Text="Fuel price per liter: "
-                               DockPanel.Dock="Left"/>
-                    <TextBox Text="{Binding FuelPrice, Mode=TwoWay}"
-                             DockPanel.Dock="Right"
-                             />
-                </DockPanel>
+                <TextBlock Text="Fuel price per liter: "
+                            Grid.Row="1" Grid.Column="0"/>
+                <TextBox Text="{Binding FuelPrice, Mode=TwoWay}"
+                         Grid.Row="1" Grid.Column="1"/>
 
                 <!-- Mileage price -->
-                <DockPanel Margin="0 5">
-                    <TextBlock Text="Liters of fuel per 1kg per 100km: "
-                               DockPanel.Dock="Left"/>
-                    <TextBox Text="{Binding Mileage, Mode=TwoWay}"
-                             DockPanel.Dock="Right"
-                             />
-                </DockPanel>
+                <TextBlock Text="Liters of fuel per 1kg per 100km: "
+                           Grid.Row="2" Grid.Column="0"/>
+                <TextBox Text="{Binding Mileage, Mode=TwoWay}"
+                         Grid.Row="2" Grid.Column="1"/>
 
-                <!-- Number of times unit to simulate -->
-                <DockPanel Margin="0 5">
-                    <TextBlock Text="Number of times unit to simulate: "
-                               DockPanel.Dock="Left"/>
-                    <TextBox Text="{Binding NumberOfRounds, Mode=TwoWay}"
-                             DockPanel.Dock="Right"
-                             />
-                </DockPanel>
+                <!-- Number of iterations unit to simulate -->
+                <TextBlock Text="Number of iterations: "
+                           Grid.Row="3" Grid.Column="0"/>
+                <TextBox Text="{Binding NumberOfIterations, Mode=TwoWay}"
+                         Grid.Row="3" Grid.Column="1"/>
 
                 <!-- Penalty -->
-                <DockPanel Margin="0 5">
-                    <TextBlock Text="Penalty % per time unit: "
-                               DockPanel.Dock="Left"/>
-                    <TextBox Text="{Binding Penalty, Mode=TwoWay}"
-                             DockPanel.Dock="Right"
-                             />
-                </DockPanel>
-                
-                <!-- Mass of packages distribution -->
-                <DockPanel Margin="0 5"
-                           LastChildFill="True">
-                    <TextBlock Text="Mass of packages distribution    "
-                               DockPanel.Dock="Left"/>
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Right">
-                        
-                        <TextBlock Text="mean: "/>
-                        <TextBox Text="{Binding PackageMassMean, Mode=TwoWay}"
-                                 Width="50"
-                                 />
-                        <TextBlock Text="std: " Margin="10 0 0 0"/>
-                        <TextBox Text="{Binding PackageMassStd, Mode=TwoWay}"
-                                 Width="50"
-                                 />
-                        <TextBlock Text="min: " Margin="10 0 0 0"/>
-                        <TextBox Text="{Binding PackageMassMin, Mode=TwoWay}"
-                                 Width="50"
-                                 />
-                    </StackPanel>
+                <TextBlock Text="Penalty % per time unit: "
+                           Grid.Row="4" Grid.Column="0"/>
+                <TextBox Text="{Binding Penalty, Mode=TwoWay}"
+                         Grid.Row="4" Grid.Column="1"/>
 
-                </DockPanel>
+                <!-- Mass of packages distribution -->
+                <TextBlock Text="Mass of packages distribution    "
+                            Grid.Row="5" Grid.Column="0"/>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Grid.Row="5" Grid.Column="1">
+                    
+                    <TextBlock Text="mean: "/>
+                    <TextBox Text="{Binding PackageMassMean, Mode=TwoWay}"
+                            Width="50"
+                            />
+                    <TextBlock Text="std: " Margin="10 0 0 0"/>
+                    <TextBox Text="{Binding PackageMassStd, Mode=TwoWay}"
+                            Width="50"
+                            />
+                    <TextBlock Text="min: " Margin="10 0 0 0"/>
+                    <TextBox Text="{Binding PackageMassMin, Mode=TwoWay}"
+                            Width="50"
+                            />
+                </StackPanel>
 
                 <!-- Income of packages distribution -->
-                <DockPanel Margin="0 5"
-                           LastChildFill="True">
-                    <TextBlock Text="Income of packages distribution"
-                               DockPanel.Dock="Left"/>
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Right">
+                <TextBlock Text="Income of packages distribution"
+                            Grid.Row="6" Grid.Column="0"/>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Grid.Row="6" Grid.Column="1">
 
-                        <TextBlock Text="mean: "/>
-                        <TextBox Text="{Binding PackageIncomeMean, Mode=TwoWay}"
+                    <TextBlock Text="mean: "/>
+                    <TextBox Text="{Binding PackageIncomeMean, Mode=TwoWay}"
                              Width="50"
                              />
-                        <TextBlock Text="std: " Margin="10 0 0 0"/>
-                        <TextBox Text="{Binding PackageIncomeStd, Mode=TwoWay}"
+                    <TextBlock Text="std: " Margin="10 0 0 0"/>
+                    <TextBox Text="{Binding PackageIncomeStd, Mode=TwoWay}"
                              Width="50"
                              />
-                        <TextBlock Text="min: " Margin="10 0 0 0"/>
-                        <TextBox Text="{Binding PackageIncomeMin, Mode=TwoWay}"
+                    <TextBlock Text="min: " Margin="10 0 0 0"/>
+                    <TextBox Text="{Binding PackageIncomeMin, Mode=TwoWay}"
                              Width="50"
                              />
-                    </StackPanel>
-
-                </DockPanel>
+                </StackPanel>
 
                 <!-- Deadline of packages distribution -->
-                <DockPanel Margin="0 5"
-                           LastChildFill="True">
-                    <TextBlock Text="Deadline of packages distribution"
-                               DockPanel.Dock="Left"/>
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Right">
+                <TextBlock Text="Deadline of packages distribution"
+                            Grid.Row="7" Grid.Column="0"/>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Grid.Row="7" Grid.Column="1">
 
-                        <TextBlock Text="mean: "/>
-                        <TextBox Text="{Binding PackageDeadlineMean, Mode=TwoWay}"
+                    <TextBlock Text="mean: "/>
+                    <TextBox Text="{Binding PackageDeadlineMean, Mode=TwoWay}"
                              Width="50"
                              />
-                        <TextBlock Text="std: " Margin="10 0 0 0"/>
-                        <TextBox Text="{Binding PackageDeadlineStd, Mode=TwoWay}"
+                    <TextBlock Text="std: " Margin="10 0 0 0"/>
+                    <TextBox Text="{Binding PackageDeadlineStd, Mode=TwoWay}"
                              Width="50"
                              />
-                        <TextBlock Text="min: " Margin="10 0 0 0"/>
-                        <TextBox Text="{Binding PackageDeadlineMin, Mode=TwoWay}"
+                    <TextBlock Text="min: " Margin="10 0 0 0"/>
+                    <TextBox Text="{Binding PackageDeadlineMin, Mode=TwoWay}"
                              Width="50"
                              />
-                    </StackPanel>
-
-                </DockPanel>
+                </StackPanel>
 
                 <!-- Count of packages distribution -->
-                <DockPanel Margin="0 5"
-                           LastChildFill="True">
-                    <TextBlock Text="Package count distribution"
-                               DockPanel.Dock="Left"/>
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Right">
+                <TextBlock Text="Package count distribution"
+                            Grid.Row="8" Grid.Column="0" />
 
-                        <TextBlock Text="mean: "/>
-                        <TextBox Text="{Binding PackageCountMean, Mode=TwoWay}"
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Grid.Row="8" Grid.Column="1">
+
+                    <TextBlock Text="mean: "/>
+                    <TextBox Text="{Binding PackageCountMean, Mode=TwoWay}"
                              Width="50"
                              />
-                        <TextBlock Text="std: " Margin="10 0 0 0"/>
-                        <TextBox Text="{Binding PackageCountStd, Mode=TwoWay}"
+                    <TextBlock Text="std: " Margin="10 0 0 0"/>
+                    <TextBox Text="{Binding PackageCountStd, Mode=TwoWay}"
                              Width="50"
                              />
-                        <TextBlock Text="min: " Margin="10 0 0 0"/>
-                        <TextBox Text="{Binding PackageCountMin, Mode=TwoWay}"
+                    <TextBlock Text="min: " Margin="10 0 0 0"/>
+                    <TextBox Text="{Binding PackageCountMin, Mode=TwoWay}"
                              Width="50"
                              />
-                    </StackPanel>
+                </StackPanel>
 
-                </DockPanel>
+                <!-- Number of generations -->
+                <TextBlock Text="Number of generations: "
+                           Grid.Row="9" Grid.Column="0"/>
+                <TextBox Text="{Binding NumberOfGenerations, Mode=TwoWay}"
+                         Grid.Row="9" Grid.Column="1"/>
+                
+                <!-- Mutation probability -->
+                <TextBlock Text="Mutation probability [%]: "
+                           Grid.Row="10" Grid.Column="0"/>
+                <TextBox Text="{Binding MutationProbability, Mode=TwoWay}"
+                         Grid.Row="10" Grid.Column="1"/>
 
-            </StackPanel>
+            </Grid>
+
             
             <DockPanel Grid.Row="2"
                        Margin="0 10 0 0">
@@ -214,6 +224,7 @@
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -231,28 +242,31 @@
                 <DockPanel LastChildFill="True">
 
                     <TextBlock DockPanel.Dock="Right">
-                        <Run Text="{Binding Percentage, FallbackValue=20.22, StringFormat=0.00}"/>
+                        <Run Text="{Binding Percentage, FallbackValue=20.22, StringFormat=0.00, Mode=OneWay}"/>
                         <Run Text="%"/>
-                        <Run Text="Round:"/>
-                        <Run Text="{Binding Round, FallbackValue=2}"/>
-                        <Run Text="/"/>
-                        <Run Text="{Binding TotalRounds, FallbackValue=10}"/>
                         <Run Text="Iteration:"/>
                         <Run Text="{Binding Iteration, FallbackValue=2}"/>
 
                     </TextBlock>
                     
                     <ProgressBar Minimum="0" 
-                                 Maximum="{Binding TotalRounds}"
-                                 Value="{Binding Round}"
+                                 Maximum="100"
+                                 Value="{Binding Percentage, Mode=OneWay}"
                                  Height="20"/>
                 </DockPanel>
                 
             </StackPanel>
-
-            <TreeView Grid.Row="1"
+            
+            <StackPanel Grid.Row="1">
+                <Button Content="Export to EXCEL"
+                        HorizontalAlignment="Left"
+                        Margin="0"
+                        Command="{Binding ExportExcelCommand}"/>
+            </StackPanel>
+            
+            <TreeView Grid.Row="2"
                       x:Name="treeView"
-                      ItemsSource="{Binding Report.Rounds}"
+                      ItemsSource="{Binding Report.Iterations}"
                       VirtualizingStackPanel.IsVirtualizing="True"
                       VirtualizingStackPanel.VirtualizationMode="Recycling">
                 <TreeView.Resources>
@@ -282,35 +296,36 @@
                             </HierarchicalDataTemplate.ItemTemplate>
                         </HierarchicalDataTemplate>
                     </ResourceDictionary>
-                </TreeView.Resources>    
-                
+                </TreeView.Resources>
+
                 <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding Iterations}">
-                        <TextBlock>
-                            <Run Text="Round"/>
-                            <Run Text="{Binding RoundNumber, Mode=OneWay}"/>
-                        </TextBlock>
-                        <HierarchicalDataTemplate.ItemTemplate>
-                            <HierarchicalDataTemplate ItemsSource="{Binding Planes}">
-                                <TextBlock>
-                                    <Run Text="Iteration:"/>
-                                    <Run Text="{Binding Number, Mode=OneWay}"/>
-                                    <Run Text="ObjectiveFunction:"/>
-                                    <Run Text="{Binding ObjectiveFunctionValue, Mode=OneWay}"/>
-                                </TextBlock>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Generations}">
+                            <TextBlock>
+                                <Run Text="Iteration:"/>
+                                <Run Text="{Binding Number, Mode=OneWay}"/>
+                                <Run Text="Generations:"/>
+                                <Run Text="{Binding GenerationsCount, Mode=OneWay}"/>
+                            </TextBlock>
+                            <HierarchicalDataTemplate.ItemTemplate>
+                                <HierarchicalDataTemplate ItemsSource="{Binding Planes}">
+                                    <TextBlock>
+                                        <Run Text="ObjectiveFunction:"/>
+                                        <Run Text="{Binding ObjectiveFunctionValue, Mode=OneWay}"/>
+                                    </TextBlock>
                                 <HierarchicalDataTemplate.ItemTemplate>
-                                    <HierarchicalDataTemplate ItemsSource="{Binding AllDisplayableCollections}" 
-                                                              ItemTemplateSelector="{StaticResource templateSelector}">
-                                        <Label Content="{Binding UnderlyingPlane.Model, Mode=OneWay}"/>
+                                        <HierarchicalDataTemplate ItemsSource="{Binding AllDisplayableCollections}" 
+                                                                  ItemTemplateSelector="{StaticResource templateSelector}">
+                                        <Label Content="Planes"/>
                                     </HierarchicalDataTemplate>
-                                </HierarchicalDataTemplate.ItemTemplate>
-                            </HierarchicalDataTemplate>
-                        </HierarchicalDataTemplate.ItemTemplate>
+                                    </HierarchicalDataTemplate.ItemTemplate>
+                                </HierarchicalDataTemplate>
+                            </HierarchicalDataTemplate.ItemTemplate>
                     </HierarchicalDataTemplate>
+
                 </TreeView.ItemTemplate>
                 
             </TreeView>
-        </Grid>
 
+        </Grid>
     </Grid>
 </local:BasePage>

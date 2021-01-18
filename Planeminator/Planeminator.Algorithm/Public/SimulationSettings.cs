@@ -19,6 +19,12 @@ namespace Planeminator.Algorithm.Public
 
         public double PenaltyPercent { get; set; }
 
+        public int NumberOfIterations { get; set; }
+
+        public double MutationProbability { get; set; }
+
+        public int GenerationSize { get; set; }
+
         public PackageGenerationSettings PackageGeneration { get; set; }
 
     }

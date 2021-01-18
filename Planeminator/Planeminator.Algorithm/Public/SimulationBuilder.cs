@@ -3,7 +3,7 @@ using System;
 
 namespace Planeminator.Algorithm.Public
 {
-    public delegate void ProgressHandler(int round, int interation);
+    public delegate void ProgressHandler(int interation);
 
     public class SimulationBuilder
     {

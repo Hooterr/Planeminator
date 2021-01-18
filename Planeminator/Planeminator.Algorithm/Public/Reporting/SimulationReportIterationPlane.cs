@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Planeminator.Algorithm.Public.Reporting
 {
-    public class SimulationReportRoundPlane
+    public class SimulationReportIterationPlane
     {
         public List<SimulationReportAirport> Route { get; set; }
 
