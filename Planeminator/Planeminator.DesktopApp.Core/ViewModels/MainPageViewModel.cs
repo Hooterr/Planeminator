@@ -34,6 +34,10 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 
         public SimulationReport Report { get; set; }
 
+        public double? FinalSolutionObjValue => Report?.FinalSolution.ObjectiveFunctionValue;
+
+        public string PopulationSeed { get; set; } = "654321";
+
         public int Iteration { get; set; }
 
         [DependsOn(nameof(Iteration), nameof(IterationsTotal))]
@@ -72,6 +76,8 @@ namespace Planeminator.DesktopApp.Core.ViewModels
 
         public string NumberOfGenerations { get; set; } = "200";
         public string MutationProbability { get; set; } = "0.001";
+
+        public string NumberOfPlanes { get; set; } = "20";
 
         #region Commands 
 
@@ -116,61 +122,10 @@ namespace Planeminator.DesktopApp.Core.ViewModels
                 var mileague = double.Parse(Mileage);
                 var b = 1.5;
                 var a = mileague / 100;
+
                 builder.Settings = new SimulationSettings()
                 {
-                    Planes = new List<Plane>()
-                    {
-                        new Plane()
-                        {
-                            Model = "Antonov 1",
-                            Mileague = new LinearMileageFunction(a, b),
-                        },
-                        new Plane()
-                        {
-                            Model = "Antonov 2",
-                            Mileague = new LinearMileageFunction(a, b),
-                        },
-                        new Plane()
-                        {
-                            Model = "Antonov 3",
-                            Mileague = new LinearMileageFunction(a, b),
-                        },
-                        new Plane()
-                        {
-                            Model = "Antonov 4",
-                            Mileague = new LinearMileageFunction(a, b),
-                        },
-                        new Plane()
-                        {
-                            Model = "Antonov 5",
-                            Mileague = new LinearMileageFunction(a, b),
-                        },
-                        new Plane()
-                        {
-                            Model = "Antonov 6",
-                            Mileague = new LinearMileageFunction(a, b),
-                        },
-                        new Plane()
-                        {
-                            Model = "Antonov 7",
-                            Mileague = new LinearMileageFunction(a, b),
-                        },
-                        new Plane()
-                        {
-                            Model = "Antonov 8",
-                            Mileague = new LinearMileageFunction(a, b),
-                        },
-                        new Plane()
-                        {
-                            Model = "Antonov 9",
-                            Mileague = new LinearMileageFunction(a, b),
-                        },
-                        new Plane()
-                        {
-                            Model = "Antonov 10",
-                            Mileague = new LinearMileageFunction(a, b)
-                        },
-                    },
+                    Planes = new List<Plane>(),
                     Airports = airports,
                     DurationInTimeUnits = int.Parse(NumberOfIterations),
                     FuelPricePerLiter = double.Parse(FuelPrice),
@@ -207,6 +162,18 @@ namespace Planeminator.DesktopApp.Core.ViewModels
                     builder.Settings.Seed = seedInt;
                 else
                     builder.Settings.Seed = null;
+
+                if (int.TryParse(PopulationSeed, out seedInt))
+                    builder.Settings.InitialPopulationSeed = seedInt;
+                else
+                    builder.Settings.InitialPopulationSeed = null;
+
+                var numOfPlanes = int.Parse(NumberOfPlanes);
+                builder.Settings.Planes.AddRange(Enumerable.Range(1, numOfPlanes).Select(i => new Plane()
+                {
+                    Model = "Plane " + i,
+                    Mileague = new LinearMileageFunction(a, b),
+                }));
 
                 builder.Settings.PenaltyPercent = double.Parse(Penalty);
                 builder.Settings.NumberOfIterations = int.Parse(NumberOfIterations);

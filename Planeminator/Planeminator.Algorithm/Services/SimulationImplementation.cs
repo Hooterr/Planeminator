@@ -29,7 +29,7 @@ namespace Planeminator.Algorithm.Services
         private readonly List<AlgorithmAirport> Airports;
         private readonly List<AlgorithmPlane> Planes;
         private readonly List<AlgorithmPackage> UndelieveredPackages = new List<AlgorithmPackage>();
-        private readonly Random rng;
+        private readonly Random rng, populationRng;
         private readonly IAirportDistanceMap DistanceMap;
         private readonly IMapper mapper;
         private readonly IReportingService reporting;
@@ -60,6 +60,7 @@ namespace Planeminator.Algorithm.Services
             }
 
             rng = settings.Seed.HasValue ? new Random(settings.Seed.Value) : new Random();
+            populationRng = settings.InitialPopulationSeed.HasValue ? new Random(settings.InitialPopulationSeed.Value) : new Random();
             DistanceMap = AirportDistanceMap.FromAirports(algAirports);
             Airports = algAirports;
             Planes = algPlanes;
@@ -216,8 +217,8 @@ namespace Planeminator.Algorithm.Services
                 itn++;
             }
 
-        finish:
-            var final = Generations.OrderBy(x => x.ObjectiveFunctionValue).FirstOrDefault();
+            finish:
+            var final = Generations.OrderByDescending(x => x.ObjectiveFunctionValue).FirstOrDefault();
             CalculateObjectiveFunction(final.Elements);
             reporting.FinalSolution(final);
             reporting.NextPopulation(final);
@@ -240,7 +241,7 @@ namespace Planeminator.Algorithm.Services
                         Plane = plane,
                         Route = Enumerable
                             .Range(0, AlgorithmPlane.RouteLength)
-                            .Select(i => GetRandomAirport()).ToList(),
+                            .Select(i => GetRandomAirport(populationRng)).ToList(),
                     }).ToList(),
                 };
 
@@ -360,13 +361,14 @@ namespace Planeminator.Algorithm.Services
 
         private AlgorithmAirport GetRandomAirport()
         {
+            return GetRandomAirport(rng);
+        }
+
+        private AlgorithmAirport GetRandomAirport(Random rng)
+        {
             return Airports[rng.Next(0, Airports.Count - 1)];
         }
 
-        private AlgorithmPlane GetRandomPlane()
-        {
-            return Planes[rng.Next(0, Planes.Count - 1)];
-        }
 
         public override SimulationReport GetReport()
         {

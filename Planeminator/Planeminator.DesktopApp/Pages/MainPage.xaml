@@ -50,45 +50,53 @@
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
 
-
                 <!-- Seed -->
-                <TextBlock Text="Seed: "
+                <TextBlock Text="Initial population seed: "
                             DockPanel.Dock="Left"
                             Grid.Row="0" Grid.Column="0"/>
-                <TextBox Text="{Binding Seed, Mode=TwoWay}"
+                <TextBox Text="{Binding PopulationSeed, Mode=TwoWay}"
                             Grid.Row="0" Grid.Column="1"
                         />
+                
+                <!-- Seed -->
+                <TextBlock Text="All other seed: "
+                            DockPanel.Dock="Left"
+                            Grid.Row="1" Grid.Column="0"/>
+                <TextBox Text="{Binding Seed, Mode=TwoWay}"
+                            Grid.Row="1" Grid.Column="1"
+                        />
+                                
 
                 <!-- Fuel price -->
                 <TextBlock Text="Fuel price per liter: "
-                            Grid.Row="1" Grid.Column="0"/>
+                            Grid.Row="2" Grid.Column="0"/>
                 <TextBox Text="{Binding FuelPrice, Mode=TwoWay}"
-                         Grid.Row="1" Grid.Column="1"/>
+                         Grid.Row="2" Grid.Column="1"/>
 
                 <!-- Mileage price -->
                 <TextBlock Text="Liters of fuel per 1kg per 100km: "
-                           Grid.Row="2" Grid.Column="0"/>
+                           Grid.Row="3" Grid.Column="0"/>
                 <TextBox Text="{Binding Mileage, Mode=TwoWay}"
-                         Grid.Row="2" Grid.Column="1"/>
+                         Grid.Row="3" Grid.Column="1"/>
 
                 <!-- Number of iterations unit to simulate -->
                 <TextBlock Text="Number of iterations: "
-                           Grid.Row="3" Grid.Column="0"/>
+                           Grid.Row="4" Grid.Column="0"/>
                 <TextBox Text="{Binding NumberOfIterations, Mode=TwoWay}"
-                         Grid.Row="3" Grid.Column="1"/>
+                         Grid.Row="4" Grid.Column="1"/>
 
                 <!-- Penalty -->
                 <TextBlock Text="Penalty % per time unit: "
-                           Grid.Row="4" Grid.Column="0"/>
+                           Grid.Row="5" Grid.Column="0"/>
                 <TextBox Text="{Binding Penalty, Mode=TwoWay}"
-                         Grid.Row="4" Grid.Column="1"/>
+                         Grid.Row="5" Grid.Column="1"/>
 
                 <!-- Mass of packages distribution -->
                 <TextBlock Text="Mass of packages distribution    "
-                            Grid.Row="5" Grid.Column="0"/>
+                            Grid.Row="6" Grid.Column="0"/>
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Left"
-                            Grid.Row="5" Grid.Column="1">
+                            Grid.Row="6" Grid.Column="1">
                     
                     <TextBlock Text="mean: "/>
                     <TextBox Text="{Binding PackageMassMean, Mode=TwoWay}"
@@ -106,10 +114,10 @@
 
                 <!-- Income of packages distribution -->
                 <TextBlock Text="Income of packages distribution"
-                            Grid.Row="6" Grid.Column="0"/>
+                            Grid.Row="7" Grid.Column="0"/>
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Left"
-                            Grid.Row="6" Grid.Column="1">
+                            Grid.Row="7" Grid.Column="1">
 
                     <TextBlock Text="mean: "/>
                     <TextBox Text="{Binding PackageIncomeMean, Mode=TwoWay}"
@@ -127,10 +135,10 @@
 
                 <!-- Deadline of packages distribution -->
                 <TextBlock Text="Deadline of packages distribution"
-                            Grid.Row="7" Grid.Column="0"/>
+                            Grid.Row="8" Grid.Column="0"/>
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Left"
-                            Grid.Row="7" Grid.Column="1">
+                            Grid.Row="8" Grid.Column="1">
 
                     <TextBlock Text="mean: "/>
                     <TextBox Text="{Binding PackageDeadlineMean, Mode=TwoWay}"
@@ -148,11 +156,11 @@
 
                 <!-- Count of packages distribution -->
                 <TextBlock Text="Package count distribution"
-                            Grid.Row="8" Grid.Column="0" />
+                            Grid.Row="9" Grid.Column="0" />
 
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Left"
-                            Grid.Row="8" Grid.Column="1">
+                            Grid.Row="9" Grid.Column="1">
 
                     <TextBlock Text="mean: "/>
                     <TextBox Text="{Binding PackageCountMean, Mode=TwoWay}"
@@ -170,52 +178,92 @@
 
                 <!-- Number of generations -->
                 <TextBlock Text="Number of generations: "
-                           Grid.Row="9" Grid.Column="0"/>
+                           Grid.Row="10" Grid.Column="0"/>
                 <TextBox Text="{Binding NumberOfGenerations, Mode=TwoWay}"
-                         Grid.Row="9" Grid.Column="1"/>
+                         Grid.Row="10" Grid.Column="1"/>
                 
                 <!-- Mutation probability -->
                 <TextBlock Text="Mutation probability [%]: "
-                           Grid.Row="10" Grid.Column="0"/>
+                           Grid.Row="11" Grid.Column="0"/>
                 <TextBox Text="{Binding MutationProbability, Mode=TwoWay}"
-                         Grid.Row="10" Grid.Column="1"/>
+                         Grid.Row="11" Grid.Column="1"/>
+
+                <!-- Number of planes -->
+                <TextBlock Text="Number of planes: "
+                           Grid.Row="12" Grid.Column="0"/>
+                <TextBox Text="{Binding NumberOfPlanes, Mode=TwoWay}"
+                         Grid.Row="12" Grid.Column="1"/>
 
             </Grid>
 
-            
-            <DockPanel Grid.Row="2"
-                       Margin="0 10 0 0">
-                
-                <StackPanel Margin="0 5"
-                           DockPanel.Dock="Top">
-                    <Button Content="Import airports"
-                            Command="{Binding ImportAirportsCommand}"/>
-                    <TextBlock Text="{Binding AirportsPath}"/>
-                    <TextBlock>
-                        <Run Text="Loaded:"/>  
-                        <Run Text="{Binding AirportsCount, Mode=OneWay}"/>
-                        <Run Text="airports"/>
-                    </TextBlock>
-                </StackPanel>
+            <TabControl Grid.Row="2">
+                <TabItem Header="Airports">
+                    <DockPanel>
 
-                <Button Content="Save airports as..."
-                        Command="{Binding SaveAirportsCommand}"
-                        DockPanel.Dock="Bottom"
+                        <StackPanel Margin="0 5" DockPanel.Dock="Top">
+                            <Button Content="Import airports"
+                                    Command="{Binding ImportAirportsCommand}"/>
+                            <TextBlock Text="{Binding AirportsPath}"/>
+                            <TextBlock>
+                                <Run Text="Loaded:"/>  
+                                <Run Text="{Binding AirportsCount, Mode=OneWay}"/>
+                                <Run Text="airports"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <Button Content="Save airports as..."
+                                Command="{Binding SaveAirportsCommand}"
+                                DockPanel.Dock="Bottom"
                         />
-                
-                <DataGrid DockPanel.Dock="Bottom"
-                          ItemsSource="{Binding Airports}"
-                          AutoGenerateColumns="False"
-                          CanUserAddRows="False"
-                          AlternatingRowBackground="LightBlue">
-                    <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Header = "Include" Binding = "{Binding IsChecked, Mode=TwoWay}"/>
-                        <DataGridTextColumn Header = "Name" Binding = "{Binding Name}" />
-                        <DataGridTextColumn Header = "City" Binding = "{Binding City}" />
-                        <DataGridTextColumn Header = "Country" Binding = "{Binding Country}" />
-                    </DataGrid.Columns>
-                </DataGrid>
-            </DockPanel>
+
+                        <DataGrid DockPanel.Dock="Bottom"
+                                  ItemsSource="{Binding Airports}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  AlternatingRowBackground="LightBlue">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Header = "Include" 
+                                                        Binding = "{Binding IsChecked, Mode=TwoWay}"/>
+                                <DataGridTextColumn Header = "Name" Binding = "{Binding Name}" />
+                                <DataGridTextColumn Header = "City" Binding = "{Binding City}" />
+                                <DataGridTextColumn Header = "Country" Binding = "{Binding Country}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </TabItem>
+                <TabItem Header="Planes" IsEnabled="False">
+                    <DockPanel>
+
+                        <StackPanel Margin="0 5" DockPanel.Dock="Top">
+                            <Button Content="Import airports"
+                                    Command="{Binding ImportAirportsCommand}"
+                                    Visibility="Collapsed"/>
+                            <TextBlock Text="{Binding AirportsPath}"/>
+                            <TextBlock>
+                                <Run Text="Planes:"/>  
+                                <Run Text="{Binding AirportsCount, Mode=OneWay}"/>
+                                <Run Text="airports"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <DataGrid DockPanel.Dock="Bottom"
+                                  ItemsSource="{Binding Airports}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  AlternatingRowBackground="LightBlue">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Header = "Include" 
+                                                        Binding = "{Binding IsChecked, Mode=TwoWay}"/>
+                                <DataGridTextColumn Header = "Name" Binding = "{Binding Name}" />
+                                <DataGridTextColumn Header = "City" Binding = "{Binding City}" />
+                                <DataGridTextColumn Header = "Country" Binding = "{Binding Country}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </TabItem>
+            </TabControl>
+            <!-- Airports -->
+            
 
         </Grid>
 
@@ -257,11 +305,16 @@
                 
             </StackPanel>
             
-            <StackPanel Grid.Row="1">
+            <StackPanel Grid.Row="1"
+                        Orientation="Vertical">
                 <Button Content="Export to EXCEL"
                         HorizontalAlignment="Left"
                         Margin="0"
                         Command="{Binding ExportExcelCommand}"/>
+                <TextBlock>
+                    <Run Text="Final solution objective function value:"/>
+                    <Run Text="{Binding FinalSolutionObjValue, Mode=OneWay, StringFormat=N2, FallbackValue=234.324234}" />
+                </TextBlock>
             </StackPanel>
             
             <TreeView Grid.Row="2"
@@ -310,7 +363,7 @@
                                 <HierarchicalDataTemplate ItemsSource="{Binding Planes}">
                                     <TextBlock>
                                         <Run Text="ObjectiveFunction:"/>
-                                        <Run Text="{Binding ObjectiveFunctionValue, Mode=OneWay}"/>
+                                        <Run Text="{Binding ObjectiveFunctionValue, Mode=OneWay, StringFormat=N2}"/>
                                     </TextBlock>
                                 <HierarchicalDataTemplate.ItemTemplate>
                                         <HierarchicalDataTemplate ItemsSource="{Binding AllDisplayableCollections}" 
